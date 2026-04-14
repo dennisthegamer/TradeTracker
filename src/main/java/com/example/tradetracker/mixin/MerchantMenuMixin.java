@@ -4,7 +4,6 @@ import com.example.tradetracker.event.TradeEventHandler;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MerchantResultSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.inventory.MerchantContainer;
 import net.minecraft.world.item.trading.MerchantOffer;
 import org.spongepowered.asm.mixin.Final;
@@ -14,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@SuppressWarnings("unused")
 @Mixin(MerchantResultSlot.class)
 public class MerchantMenuMixin {
 
-    @Shadow @Final private Merchant merchant;
     @Shadow @Final private MerchantContainer slots;
 
     @Inject(method = "onTake", at = @At("HEAD"))
@@ -26,7 +25,7 @@ public class MerchantMenuMixin {
 
         MerchantOffer offer = slots.getActiveOffer();
         if (offer != null) {
-            TradeEventHandler.onTradeCompleted(player, offer, merchant);
+            TradeEventHandler.onTradeCompleted(offer);
         }
     }
 }

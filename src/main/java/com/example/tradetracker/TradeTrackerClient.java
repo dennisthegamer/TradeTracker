@@ -73,7 +73,7 @@ public class TradeTrackerClient implements ClientModInitializer {
         HudElementRegistry.attachElementAfter(
                 VanillaHudElements.BOSS_BAR,
                 Identifier.fromNamespaceAndPath(MOD_ID, "hud"),
-                (graphics, deltaTracker) -> TradeTrackerHud.render(graphics, deltaTracker)
+                TradeTrackerHud::render
         );
 
         // Register tick handler

@@ -11,6 +11,8 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 public class TradeHistoryScreen extends Screen {
@@ -35,10 +37,6 @@ public class TradeHistoryScreen extends Screen {
     private String statusMessage = null;
     private int statusMessageTicks = 0;
 
-    // Mouse position tracking for hover effects
-    private int lastMouseX;
-    private int lastMouseY;
-
     public TradeHistoryScreen() {
         super(Component.translatable("tradetracker.history.title"));
         this.session = TradeSession.getInstance();
@@ -55,11 +53,8 @@ public class TradeHistoryScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
-
-        this.lastMouseX = mouseX;
-        this.lastMouseY = mouseY;
 
         Font font = this.font;
         int screenW = this.width;
@@ -127,14 +122,14 @@ public class TradeHistoryScreen extends Screen {
             if (professions.get(i) == null) {
                 profName = I18n.get("tradetracker.history.all");
                 int totalBalance = session.getNetBalance();
-                balanceStr = String.format("(%d) %+d\u25C6", session.getTradeCount(), totalBalance);
+                balanceStr = String.format("(%d) %+d◆", session.getTradeCount(), totalBalance);
                 nameColor = selected ? HEADER_COLOR : TEXT_COLOR;
             } else {
                 String prof = professions.get(i);
                 profName = prof;
                 int count = profCounts.getOrDefault(prof, 0);
                 int balance = profBalances.getOrDefault(prof, 0);
-                balanceStr = String.format("(%d) %+d\u25C6", count, balance);
+                balanceStr = String.format("(%d) %+d◆", count, balance);
             }
 
             graphics.text(font, profName, padding, entryY + 2, nameColor, true);
@@ -176,13 +171,13 @@ public class TradeHistoryScreen extends Screen {
                 graphics.text(font, profLabel,
                         rightPanelX + padding, entryY + 2, 0xFFBBBBBB, true);
 
-                String balanceLabel = String.format("%+d\u25C6", balance);
+                String balanceLabel = String.format("%+d◆", balance);
                 int balColor = balance > 0 ? PROFIT_COLOR : (balance < 0 ? LOSS_COLOR : TEXT_COLOR);
                 graphics.text(font, balanceLabel,
                         screenW - font.width(balanceLabel) - padding, entryY + 2, balColor, true);
 
                 // Line 2: Input -> Output [Time]
-                String tradeDesc = entry.getInputDescription() + " \u2192 " + entry.getOutputDescription();
+                String tradeDesc = entry.getInputDescription() + " → " + entry.getOutputDescription();
                 String timeStr = "[" + entry.getFormattedTime() + "]";
 
                 // Truncate trade description if needed
@@ -243,7 +238,7 @@ public class TradeHistoryScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean consumed) {
+    public boolean mouseClicked(@NotNull MouseButtonEvent event, boolean consumed) {
         if (consumed) return false;
 
         double mouseX = event.x();

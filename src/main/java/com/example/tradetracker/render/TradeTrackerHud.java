@@ -27,10 +27,6 @@ public class TradeTrackerHud {
         compactMode = !compactMode;
     }
 
-    public static boolean isCompactMode() {
-        return compactMode;
-    }
-
     public static void triggerProfitFlash() {
         flashTicksRemaining = FLASH_DURATION;
         flashColor = 0xFFD700; // gold
@@ -53,10 +49,10 @@ public class TradeTrackerHud {
         if (!config.enabled) return;
 
         // Visibility check: only show when merchant screen is open (unless always visible)
-        if (!config.hudVisibleAlways && !TradeEventHandler.isMerchantScreenOpen()) return;
+        if (!config.hudVisibleAlways && TradeEventHandler.isMerchantScreenClosed()) return;
 
         TradeSession session = TradeSession.getInstance();
-        if (session.getTradeCount() == 0 && !TradeEventHandler.isMerchantScreenOpen()) return;
+        if (session.getTradeCount() == 0 && TradeEventHandler.isMerchantScreenClosed()) return;
 
         float scale = config.hudScale;
         Matrix3x2fStack pose = graphics.pose();

@@ -68,7 +68,10 @@ public class TradeTrackerConfig {
 
     public void save() {
         try {
-            CONFIG_FILE.getParentFile().mkdirs();
+            if (!CONFIG_FILE.getParentFile().mkdirs() && !CONFIG_FILE.getParentFile().exists()) {
+                System.err.println("Failed to create config directory");
+                return;
+            }
             try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
                 GSON.toJson(this, writer);
             }

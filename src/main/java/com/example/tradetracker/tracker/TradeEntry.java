@@ -70,18 +70,6 @@ public class TradeEntry {
         return wanderingTrader;
     }
 
-    public ItemStack getInput1() {
-        return input1;
-    }
-
-    public ItemStack getInput2() {
-        return input2;
-    }
-
-    public ItemStack getOutput() {
-        return output;
-    }
-
     public int getEmeraldBalance() {
         return emeraldBalance;
     }

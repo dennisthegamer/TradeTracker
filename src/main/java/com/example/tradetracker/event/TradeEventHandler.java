@@ -7,9 +7,7 @@ import com.example.tradetracker.tracker.TradeEntry;
 import com.example.tradetracker.tracker.TradeSession;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffer;
 
 public class TradeEventHandler {
@@ -37,7 +35,7 @@ public class TradeEventHandler {
     /**
      * Called from the mixin when a trade result is taken by the player.
      */
-    public static void onTradeCompleted(Player player, MerchantOffer offer, Merchant merchant) {
+    public static void onTradeCompleted(MerchantOffer offer) {
         TradeTrackerConfig config = TradeTrackerConfig.getInstance();
         if (!config.enabled) return;
 
@@ -87,16 +85,9 @@ public class TradeEventHandler {
         currentIsWandering = false;
     }
 
-    public static boolean isMerchantScreenOpen() {
+    public static boolean isMerchantScreenClosed() {
         Minecraft client = Minecraft.getInstance();
-        return client.screen instanceof MerchantScreen;
+        return !(client.screen instanceof MerchantScreen);
     }
 
-    public static String getCurrentProfession() {
-        return currentProfession;
-    }
-
-    public static boolean isCurrentWandering() {
-        return currentIsWandering;
-    }
 }

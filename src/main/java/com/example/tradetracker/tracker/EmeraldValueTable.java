@@ -1,9 +1,7 @@
 package com.example.tradetracker.tracker;
 
-import com.example.tradetracker.config.TradeTrackerConfig;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -132,48 +130,6 @@ public class EmeraldValueTable {
     }
 
     /**
-     * Get the emerald value of a single item. Checks config overrides first, then defaults.
-     */
-    public static float getItemValue(ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-
-        String itemId = stack.getItem().builtInRegistryHolder().key().identifier().toString();
-
-        // Check config overrides first
-        TradeTrackerConfig config = TradeTrackerConfig.getInstance();
-        if (config.itemValues.containsKey(itemId)) {
-            return config.itemValues.get(itemId);
-        }
-
-        // Check defaults
-        if (DEFAULT_VALUES.containsKey(itemId)) {
-            return DEFAULT_VALUES.get(itemId);
-        }
-
-        // Unknown item - return 0
-        return 0f;
-    }
-
-    /**
-     * Get the total emerald value of a stack (value per item * count).
-     */
-    public static float getStackValue(ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-
-        String itemId = stack.getItem().builtInRegistryHolder().key().identifier().toString();
-
-        // Emeralds are always worth their count
-        if (itemId.equals("minecraft:emerald")) {
-            return stack.getCount();
-        }
-        if (itemId.equals("minecraft:emerald_block")) {
-            return stack.getCount() * 9f;
-        }
-
-        return getItemValue(stack) * stack.getCount();
-    }
-
-    /**
      * Calculate the emerald balance for a trade.
      * Tracks actual emerald flow: emeralds gained minus emeralds spent.
      * Positive = gained emeralds, Negative = spent emeralds.
@@ -190,13 +146,10 @@ public class EmeraldValueTable {
      */
     private static int getEmeraldCount(ItemStack stack) {
         if (stack.isEmpty()) return 0;
-        String itemId = stack.getItem().builtInRegistryHolder().key().identifier().toString();
+        String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
         if (itemId.equals("minecraft:emerald")) return stack.getCount();
         if (itemId.equals("minecraft:emerald_block")) return stack.getCount() * 9;
         return 0;
     }
 
-    public static Map<String, Float> getDefaultValues() {
-        return new HashMap<>(DEFAULT_VALUES);
-    }
 }
