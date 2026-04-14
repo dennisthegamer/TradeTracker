@@ -18,6 +18,9 @@ bin/
 # Minecraft run directory
 run/
 
+# Documentation
+docs/
+
 # OS files
 Thumbs.db
 .DS_Store
