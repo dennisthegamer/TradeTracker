@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "tradetracker",
+	"version": "${version}",
+	"name": "TradeTracker",
+	"description": "Tracks all Villager trades, calculates Emerald profit/loss, and displays a full trade history with efficiency analysis.",
+	"authors": [
+		"DennisTheGamer"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/tradetracker/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.example.tradetracker.TradeTrackerClient"
+		],
+		"modmenu": [
+			"com.example.tradetracker.config.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		"tradetracker.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": ">=26.1",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*",
+		"yet_another_config_lib_v3": "*"
+	}
+}
