@@ -6,6 +6,7 @@ import com.example.tradetracker.render.TradeTrackerHud;
 import com.example.tradetracker.screen.TradeHistoryScreen;
 import com.example.tradetracker.tracker.TradeEntry;
 import com.example.tradetracker.tracker.TradeSession;
+import com.example.tradetracker.tracker.VillagerTradeStore;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -93,6 +94,7 @@ public class TradeTrackerClient implements ClientModInitializer {
             // Just joined a world - try to restore saved session
             TradeSession session = TradeSession.getInstance();
             session.reset();
+            VillagerTradeStore.getInstance().loadFromDisk();
             TradeTrackerConfig config = TradeTrackerConfig.getInstance();
             String keyName = sessionToggleKey.getTranslatedKeyMessage().getString();
 

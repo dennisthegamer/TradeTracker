@@ -93,6 +93,12 @@ public class TradeTrackerConfigScreen {
                         .binding(defaults.trackWanderingTrader, () -> config.trackWanderingTrader, v -> config.trackWanderingTrader = v)
                         .controller(TickBoxControllerBuilder::create)
                         .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.tradetracker.show_villager_nameplate"))
+                        .description(OptionDescription.of(Component.translatable("config.tradetracker.show_villager_nameplate.tooltip")))
+                        .binding(defaults.showVillagerNameplate, () -> config.showVillagerNameplate, v -> config.showVillagerNameplate = v)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
                 .build();
     }
 }

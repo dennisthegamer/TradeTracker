@@ -36,6 +36,7 @@ public class TradeTrackerConfig {
 
     // Tracking Settings
     public boolean trackWanderingTrader = true;
+    public boolean showVillagerNameplate = true;
 
     // Item Value Overrides (item ID -> emerald value)
     public Map<String, Float> itemValues = new HashMap<>();

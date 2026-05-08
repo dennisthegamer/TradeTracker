@@ -3,7 +3,9 @@
 	"package": "com.example.tradetracker.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"MerchantMenuMixin"
+		"MerchantMenuMixin",
+		"MerchantContainerAccessor",
+		"VillagerNametagMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -5,6 +5,20 @@ All notable changes to TradeTracker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-05-06
+
+### Added
+- Per-villager trade counter: a nameplate-style label ("Trades: N") appears above a
+  villager's head when the player's crosshair targets them, showing how many trades
+  the player has completed with that specific villager
+- Config option **Show Trade Count Label** (`showVillagerNameplate`, default: enabled)
+  to toggle the per-villager nameplate on or off via the config screen
+- `VillagerTradeStore`: persistent UUID-based trade count storage, saved permanently
+  to `config/tradetracker_villagers.json` — survives world restarts
+- Wandering Trader trades are counted when the "Track Wandering Trader" config option
+  is enabled (consistent with existing session tracking behavior)
+
+
 ## [1.0.0] - 2026-04-14
 
 ### Added

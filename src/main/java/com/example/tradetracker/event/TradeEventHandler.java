@@ -5,41 +5,51 @@ import com.example.tradetracker.render.TradeTrackerHud;
 import com.example.tradetracker.tracker.EmeraldValueTable;
 import com.example.tradetracker.tracker.TradeEntry;
 import com.example.tradetracker.tracker.TradeSession;
+import com.example.tradetracker.tracker.VillagerTradeStore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.phys.AABB;
+
+import java.util.Comparator;
+import java.util.UUID;
 
 public class TradeEventHandler {
 
-    // Current merchant context (set when MerchantScreen opens)
     private static String currentProfession = "Unknown";
     private static int currentLevel = 1;
     private static boolean currentIsWandering = false;
+    private static UUID currentVillagerUuid = null;
 
-    /**
-     * Called when a MerchantScreen is detected as open. Updates the merchant context.
-     */
     public static void onMerchantScreenOpen(MerchantScreen screen) {
         String title = screen.getTitle().getString();
         currentProfession = title;
-
-        // Check if this is a wandering trader
         currentIsWandering = title.equalsIgnoreCase("Wandering Trader")
                 || title.equalsIgnoreCase("Fahrender Händler");
-
-        // Get trader level from the menu
         currentLevel = screen.getMenu().getTraderLevel();
+
+        // Capture UUID: MerchantContainer holds a ClientSideMerchant on the client,
+        // so we get the UUID from crosshairPickEntity or the nearest AbstractVillager instead.
+        currentVillagerUuid = null;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.crosshairPickEntity instanceof AbstractVillager v) {
+            currentVillagerUuid = v.getUUID();
+        } else if (mc.player != null && mc.level != null) {
+            AABB searchBox = mc.player.getBoundingBox().inflate(5.0);
+            mc.level.getEntitiesOfClass(AbstractVillager.class, searchBox)
+                    .stream()
+                    .min(Comparator.comparingDouble(v -> v.distanceTo(mc.player)))
+                    .ifPresent(v -> currentVillagerUuid = v.getUUID());
+        }
     }
 
-    /**
-     * Called from the mixin when a trade result is taken by the player.
-     */
-    public static void onTradeCompleted(MerchantOffer offer) {
+    public static void onTradeCompleted(MerchantOffer offer, UUID villagerUuid) {
+        // Prefer UUID from mixin; fall back to UUID captured at screen open
+        UUID effectiveUuid = villagerUuid != null ? villagerUuid : currentVillagerUuid;
         TradeTrackerConfig config = TradeTrackerConfig.getInstance();
         if (!config.enabled) return;
-
-        // Skip wandering trader if disabled
         if (currentIsWandering && !config.trackWanderingTrader) return;
 
         Minecraft client = Minecraft.getInstance();
@@ -67,8 +77,8 @@ public class TradeEventHandler {
         );
 
         TradeSession.getInstance().addTrade(entry);
+        VillagerTradeStore.getInstance().increment(effectiveUuid);
 
-        // Trigger HUD flash effects
         if (balance > 10) {
             TradeTrackerHud.triggerProfitFlash();
         } else if (balance < -5) {
@@ -76,18 +86,15 @@ public class TradeEventHandler {
         }
     }
 
-    /**
-     * Reset merchant context when the screen closes.
-     */
     public static void onMerchantScreenClose() {
         currentProfession = "Unknown";
         currentLevel = 1;
         currentIsWandering = false;
+        currentVillagerUuid = null;
     }
 
     public static boolean isMerchantScreenClosed() {
         Minecraft client = Minecraft.getInstance();
         return !(client.screen instanceof MerchantScreen);
     }
-
 }

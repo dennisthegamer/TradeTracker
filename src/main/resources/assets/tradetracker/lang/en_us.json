@@ -25,6 +25,8 @@
   "config.tradetracker.persist_sessions.tooltip": "Save session data to disk so it persists across world leaves",
   "config.tradetracker.track_wandering_trader": "Track Wandering Trader",
   "config.tradetracker.track_wandering_trader.tooltip": "Include Wandering Trader trades in tracking",
+  "config.tradetracker.show_villager_nameplate": "Show Trade Count Label",
+  "config.tradetracker.show_villager_nameplate.tooltip": "Show the trade count above the villager you are looking at",
 
   "tradetracker.hud.title": "\ud83d\uddfa Trade Tracker",
   "tradetracker.hud.session_trades": "Session-Trades: %d",
@@ -68,5 +70,6 @@
   "tradetracker.level.5": "Master",
 
   "tradetracker.flash.profit": "Great trade!",
-  "tradetracker.flash.loss": "Bad trade!"
+  "tradetracker.flash.loss": "Bad trade!",
+  "tradetracker.nameplate.trades": "Trades: %d"
 }

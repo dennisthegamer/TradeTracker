@@ -25,6 +25,8 @@
   "config.tradetracker.persist_sessions.tooltip": "Sitzungsdaten auf Festplatte speichern, damit sie beim Verlassen der Welt erhalten bleiben",
   "config.tradetracker.track_wandering_trader": "Wandering Trader tracken",
   "config.tradetracker.track_wandering_trader.tooltip": "Wandering Trader Trades mitz\u00e4hlen",
+  "config.tradetracker.show_villager_nameplate": "Handelsz\u00e4hler anzeigen",
+  "config.tradetracker.show_villager_nameplate.tooltip": "Anzahl der Trades \u00fcber dem anvisierten Villager anzeigen",
 
   "tradetracker.hud.title": "\ud83d\uddfa Trade Tracker",
   "tradetracker.hud.session_trades": "Session-Trades: %d",
@@ -68,5 +70,6 @@
   "tradetracker.level.5": "Meister",
 
   "tradetracker.flash.profit": "Guter Trade!",
-  "tradetracker.flash.loss": "Schlechter Trade!"
+  "tradetracker.flash.loss": "Schlechter Trade!",
+  "tradetracker.nameplate.trades": "Gehandelt: %d"
 }
