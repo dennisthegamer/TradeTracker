@@ -1,4 +1,4 @@
-package com.example.tradetracker.config;
+package de.dennisthegamer.tradetracker.config;
 
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;

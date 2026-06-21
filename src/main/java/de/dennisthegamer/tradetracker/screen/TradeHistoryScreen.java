@@ -1,7 +1,7 @@
-package com.example.tradetracker.screen;
+package de.dennisthegamer.tradetracker.screen;
 
-import com.example.tradetracker.tracker.TradeEntry;
-import com.example.tradetracker.tracker.TradeSession;
+import de.dennisthegamer.tradetracker.tracker.TradeEntry;
+import de.dennisthegamer.tradetracker.tracker.TradeSession;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;

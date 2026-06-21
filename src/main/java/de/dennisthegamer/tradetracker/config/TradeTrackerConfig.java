@@ -1,4 +1,4 @@
-package com.example.tradetracker.config;
+package de.dennisthegamer.tradetracker.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

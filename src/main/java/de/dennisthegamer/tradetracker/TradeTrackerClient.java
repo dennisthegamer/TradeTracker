@@ -1,12 +1,12 @@
-package com.example.tradetracker;
+package de.dennisthegamer.tradetracker;
 
-import com.example.tradetracker.config.TradeTrackerConfig;
-import com.example.tradetracker.event.TradeEventHandler;
-import com.example.tradetracker.render.TradeTrackerHud;
-import com.example.tradetracker.screen.TradeHistoryScreen;
-import com.example.tradetracker.tracker.TradeEntry;
-import com.example.tradetracker.tracker.TradeSession;
-import com.example.tradetracker.tracker.VillagerTradeStore;
+import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
+import de.dennisthegamer.tradetracker.event.TradeEventHandler;
+import de.dennisthegamer.tradetracker.render.TradeTrackerHud;
+import de.dennisthegamer.tradetracker.screen.TradeHistoryScreen;
+import de.dennisthegamer.tradetracker.tracker.TradeEntry;
+import de.dennisthegamer.tradetracker.tracker.TradeSession;
+import de.dennisthegamer.tradetracker.tracker.VillagerTradeStore;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -120,7 +120,7 @@ public class TradeTrackerClient implements ClientModInitializer {
         if (!inWorld) return;
 
         // Pause session when ESC/Pause screen is open
-        boolean pauseScreenOpen = client.screen instanceof PauseScreen;
+        boolean pauseScreenOpen = client.gui.screen() instanceof PauseScreen;
         if (pauseScreenOpen && !wasPaused) {
             TradeSession session = TradeSession.getInstance();
             if (!session.isPaused()) {
@@ -134,9 +134,9 @@ public class TradeTrackerClient implements ClientModInitializer {
         TradeTrackerHud.tick();
 
         // Track MerchantScreen open/close
-        boolean merchantOpen = client.screen instanceof MerchantScreen;
+        boolean merchantOpen = client.gui.screen() instanceof MerchantScreen;
         if (merchantOpen && !wasMerchantScreenOpen) {
-            TradeEventHandler.onMerchantScreenOpen((MerchantScreen) client.screen);
+            TradeEventHandler.onMerchantScreenOpen((MerchantScreen) client.gui.screen());
         } else if (!merchantOpen && wasMerchantScreenOpen) {
             TradeEventHandler.onMerchantScreenClose();
         }
@@ -148,7 +148,7 @@ public class TradeTrackerClient implements ClientModInitializer {
         }
 
         while (historyKey.consumeClick()) {
-            client.setScreen(new TradeHistoryScreen());
+            client.gui.setScreen(new TradeHistoryScreen());
         }
 
         while (sessionToggleKey.consumeClick()) {

@@ -5,6 +5,10 @@ All notable changes to TradeTracker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-06-21
+- **Support for Minecraft 26.2** — Updated all dependencies (Fabric Loader 0.19.3, Fabric API 0.152.1, Loom 1.17.11, YACL 3.9.4, ModMenu 20.0.0-beta.3) and Gradle 9.5.1 for the latest Minecraft version
+- **Maven group changed** from `com.example.tradetracker` to `de.dennisthegamer.tradetracker`
+
 ## [1.1.0] - 2026-05-06
 
 ### Added

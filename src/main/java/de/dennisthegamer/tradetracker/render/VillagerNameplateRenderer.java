@@ -1,4 +1,4 @@
-package com.example.tradetracker.render;
+package de.dennisthegamer.tradetracker.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;

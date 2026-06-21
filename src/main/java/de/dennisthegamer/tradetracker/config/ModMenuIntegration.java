@@ -1,4 +1,4 @@
-package com.example.tradetracker.config;
+package de.dennisthegamer.tradetracker.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

@@ -1,8 +1,8 @@
-package com.example.tradetracker.mixin;
+package de.dennisthegamer.tradetracker.mixin;
 
-import com.example.tradetracker.config.TradeTrackerConfig;
-import com.example.tradetracker.render.VillagerNameplateRenderer;
-import com.example.tradetracker.tracker.VillagerTradeStore;
+import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
+import de.dennisthegamer.tradetracker.render.VillagerNameplateRenderer;
+import de.dennisthegamer.tradetracker.tracker.VillagerTradeStore;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;

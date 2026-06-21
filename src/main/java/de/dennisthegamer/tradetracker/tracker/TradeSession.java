@@ -1,6 +1,6 @@
-package com.example.tradetracker.tracker;
+package de.dennisthegamer.tradetracker.tracker;
 
-import com.example.tradetracker.TradeTrackerClient;
+import de.dennisthegamer.tradetracker.TradeTrackerClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

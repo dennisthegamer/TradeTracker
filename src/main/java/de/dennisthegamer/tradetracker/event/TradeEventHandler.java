@@ -1,11 +1,11 @@
-package com.example.tradetracker.event;
+package de.dennisthegamer.tradetracker.event;
 
-import com.example.tradetracker.config.TradeTrackerConfig;
-import com.example.tradetracker.render.TradeTrackerHud;
-import com.example.tradetracker.tracker.EmeraldValueTable;
-import com.example.tradetracker.tracker.TradeEntry;
-import com.example.tradetracker.tracker.TradeSession;
-import com.example.tradetracker.tracker.VillagerTradeStore;
+import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
+import de.dennisthegamer.tradetracker.render.TradeTrackerHud;
+import de.dennisthegamer.tradetracker.tracker.EmeraldValueTable;
+import de.dennisthegamer.tradetracker.tracker.TradeEntry;
+import de.dennisthegamer.tradetracker.tracker.TradeSession;
+import de.dennisthegamer.tradetracker.tracker.VillagerTradeStore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
@@ -95,6 +95,6 @@ public class TradeEventHandler {
 
     public static boolean isMerchantScreenClosed() {
         Minecraft client = Minecraft.getInstance();
-        return !(client.screen instanceof MerchantScreen);
+        return !(client.gui.screen() instanceof MerchantScreen);
     }
 }

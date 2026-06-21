@@ -1,9 +1,9 @@
-package com.example.tradetracker.render;
+package de.dennisthegamer.tradetracker.render;
 
-import com.example.tradetracker.config.TradeTrackerConfig;
-import com.example.tradetracker.event.TradeEventHandler;
-import com.example.tradetracker.tracker.TradeEntry;
-import com.example.tradetracker.tracker.TradeSession;
+import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
+import de.dennisthegamer.tradetracker.event.TradeEventHandler;
+import de.dennisthegamer.tradetracker.tracker.TradeEntry;
+import de.dennisthegamer.tradetracker.tracker.TradeSession;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -43,7 +43,7 @@ public class TradeTrackerHud {
 
     public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft client = Minecraft.getInstance();
-        if (client.player == null || client.options.hideGui) return;
+        if (client.player == null || client.gui.hud.isHidden()) return;
 
         TradeTrackerConfig config = TradeTrackerConfig.getInstance();
         if (!config.enabled) return;

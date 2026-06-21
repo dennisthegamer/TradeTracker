@@ -7,7 +7,7 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = "${project.archives_base_name}-mc${project.minecraft_version}"
+	archivesName = project.archives_base_name
 }
 
 repositories {
@@ -24,20 +24,26 @@ repositories {
 	}
 }
 
+loom {
+	runs.configureEach {
+		vmArgs "--enable-native-access=ALL-UNNAMED", "--add-opens", "java.base/sun.misc=ALL-UNNAMED"
+	}
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// MC 26.1 is unobfuscated - no mappings needed with fabric-loom plugin
+	// No mappings for unobfuscated Minecraft 26.1+
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	// ModMenu for mod listing and configuration
 	implementation "maven.modrinth:modmenu:${project.modmenu_version}"
 
-	// YACL for configuration screens
-	implementation "maven.modrinth:yacl:${project.yacl_version}"
+	// YACL for configuration screen
+	implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
 }
 
 processResources {
