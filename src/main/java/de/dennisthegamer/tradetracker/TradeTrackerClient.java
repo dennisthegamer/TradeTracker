@@ -2,10 +2,13 @@ package de.dennisthegamer.tradetracker;
 
 import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
 import de.dennisthegamer.tradetracker.event.TradeEventHandler;
+import de.dennisthegamer.tradetracker.render.TrackingArrowHud;
 import de.dennisthegamer.tradetracker.render.TradeTrackerHud;
-import de.dennisthegamer.tradetracker.screen.TradeHistoryScreen;
+import de.dennisthegamer.tradetracker.screen.TradeTrackerTabScreen;
 import de.dennisthegamer.tradetracker.tracker.TradeEntry;
+import de.dennisthegamer.tradetracker.tracker.TradeMemoryStore;
 import de.dennisthegamer.tradetracker.tracker.TradeSession;
+import de.dennisthegamer.tradetracker.tracker.VillagerSightingUpdater;
 import de.dennisthegamer.tradetracker.tracker.VillagerTradeStore;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
@@ -34,8 +37,8 @@ public class TradeTrackerClient implements ClientModInitializer {
             new KeyMapping.Category(Identifier.fromNamespaceAndPath(MOD_ID, MOD_ID));
 
     private static KeyMapping compactKey;
-    private static KeyMapping historyKey;
     private static KeyMapping sessionToggleKey;
+    private static KeyMapping villagersKey;
 
     private boolean wasInWorld = false;
     private boolean wasMerchantScreenOpen = false;
@@ -56,17 +59,17 @@ public class TradeTrackerClient implements ClientModInitializer {
                 CATEGORY
         ));
 
-        historyKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "key.tradetracker.history",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_G,
-                CATEGORY
-        ));
-
         sessionToggleKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.tradetracker.session_toggle",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_J,
+                CATEGORY
+        ));
+
+        villagersKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+                "key.tradetracker.villagers",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_V,
                 CATEGORY
         ));
 
@@ -75,6 +78,13 @@ public class TradeTrackerClient implements ClientModInitializer {
                 VanillaHudElements.BOSS_BAR,
                 Identifier.fromNamespaceAndPath(MOD_ID, "hud"),
                 TradeTrackerHud::render
+        );
+
+        // TradeMemory: direction arrows for villagers marked for tracking
+        HudElementRegistry.attachElementAfter(
+                VanillaHudElements.BOSS_BAR,
+                Identifier.fromNamespaceAndPath(MOD_ID, "tracking_arrows"),
+                TrackingArrowHud::render
         );
 
         // Register tick handler
@@ -95,6 +105,7 @@ public class TradeTrackerClient implements ClientModInitializer {
             TradeSession session = TradeSession.getInstance();
             session.reset();
             VillagerTradeStore.getInstance().loadFromDisk();
+            TradeMemoryStore.getInstance().loadFromDisk();
             TradeTrackerConfig config = TradeTrackerConfig.getInstance();
             String keyName = sessionToggleKey.getTranslatedKeyMessage().getString();
 
@@ -133,12 +144,19 @@ public class TradeTrackerClient implements ClientModInitializer {
         // HUD effects tick
         TradeTrackerHud.tick();
 
+        // TradeMemory: refresh lastSeen/position of known villagers nearby
+        VillagerSightingUpdater.tick(client);
+
         // Track MerchantScreen open/close
         boolean merchantOpen = client.gui.screen() instanceof MerchantScreen;
         if (merchantOpen && !wasMerchantScreenOpen) {
             TradeEventHandler.onMerchantScreenOpen((MerchantScreen) client.gui.screen());
         } else if (!merchantOpen && wasMerchantScreenOpen) {
             TradeEventHandler.onMerchantScreenClose();
+        }
+        if (merchantOpen) {
+            // Offers arrive from the server after the screen opens — capture them per tick
+            TradeEventHandler.onMerchantScreenTick((MerchantScreen) client.gui.screen());
         }
         wasMerchantScreenOpen = merchantOpen;
 
@@ -147,8 +165,9 @@ public class TradeTrackerClient implements ClientModInitializer {
             TradeTrackerHud.toggleCompactMode();
         }
 
-        while (historyKey.consumeClick()) {
-            client.gui.setScreen(new TradeHistoryScreen());
+        // Unified TradeTracker window (villager memory + trade history, sidebar navigation)
+        while (villagersKey.consumeClick()) {
+            client.gui.setScreen(TradeTrackerTabScreen.openLastTab());
         }
 
         while (sessionToggleKey.consumeClick()) {
@@ -183,6 +202,7 @@ public class TradeTrackerClient implements ClientModInitializer {
             }
         }
         session.reset();
+        TradeMemoryStore.getInstance().saveIfDirty();
         wasMerchantScreenOpen = false;
         wasInWorld = false;
         LOGGER.info("Session ended");

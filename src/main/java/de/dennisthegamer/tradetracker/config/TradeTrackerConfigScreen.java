@@ -5,6 +5,9 @@ import dev.isxander.yacl3.api.controller.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.awt.Color;
+import java.util.Locale;
+
 public class TradeTrackerConfigScreen {
 
     public static Screen create(Screen parent) {
@@ -16,6 +19,7 @@ public class TradeTrackerConfigScreen {
                 .category(createGeneralCategory(config, defaults))
                 .category(createHudCategory(config, defaults))
                 .category(createTrackingCategory(config, defaults))
+                .category(createTradeMemoryCategory(config, defaults))
                 .save(config::save)
                 .build()
                 .generateScreen(parent);
@@ -53,7 +57,8 @@ public class TradeTrackerConfigScreen {
                         .description(OptionDescription.of(Component.translatable("config.tradetracker.hud_position.tooltip")))
                         .binding(defaults.getHudPosition(), config::getHudPosition, v -> config.hudPosition = v.name())
                         .controller(opt -> EnumControllerBuilder.create(opt)
-                                .enumClass(TradeTrackerConfig.HudPosition.class))
+                                .enumClass(TradeTrackerConfig.HudPosition.class)
+                                .formatValue(TradeTrackerConfigScreen::positionName))
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Component.translatable("config.tradetracker.hud_visible_always"))
@@ -100,5 +105,44 @@ public class TradeTrackerConfigScreen {
                         .controller(TickBoxControllerBuilder::create)
                         .build())
                 .build();
+    }
+
+    private static ConfigCategory createTradeMemoryCategory(TradeTrackerConfig config, TradeTrackerConfig defaults) {
+        return ConfigCategory.createBuilder()
+                .name(Component.translatable("config.tradetracker.category.trade_memory"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.tradetracker.glow_marked_villagers"))
+                        .description(OptionDescription.of(Component.translatable("config.tradetracker.glow_marked_villagers.tooltip")))
+                        .binding(defaults.glowMarkedVillagers, () -> config.glowMarkedVillagers, v -> config.glowMarkedVillagers = v)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                .option(Option.<Color>createBuilder()
+                        .name(Component.translatable("config.tradetracker.glow_color"))
+                        .description(OptionDescription.of(Component.translatable("config.tradetracker.glow_color.tooltip")))
+                        .binding(new Color(defaults.glowColor),
+                                () -> new Color(config.glowColor),
+                                v -> config.glowColor = v.getRGB() & 0xFFFFFF)
+                        .controller(ColorControllerBuilder::create)
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.tradetracker.show_direction_arrow"))
+                        .description(OptionDescription.of(Component.translatable("config.tradetracker.show_direction_arrow.tooltip")))
+                        .binding(defaults.showDirectionArrow, () -> config.showDirectionArrow, v -> config.showDirectionArrow = v)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                .option(Option.<TradeTrackerConfig.ArrowPosition>createBuilder()
+                        .name(Component.translatable("config.tradetracker.arrow_position"))
+                        .description(OptionDescription.of(Component.translatable("config.tradetracker.arrow_position.tooltip")))
+                        .binding(defaults.getArrowPosition(), config::getArrowPosition, v -> config.arrowPosition = v.name())
+                        .controller(opt -> EnumControllerBuilder.create(opt)
+                                .enumClass(TradeTrackerConfig.ArrowPosition.class)
+                                .formatValue(TradeTrackerConfigScreen::positionName))
+                        .build())
+                .build();
+    }
+
+    /** Localized display name of a screen position enum value (shared by all position options). */
+    private static Component positionName(Enum<?> value) {
+        return Component.translatable("config.tradetracker.position." + value.name().toLowerCase(Locale.ROOT));
     }
 }

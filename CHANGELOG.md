@@ -5,6 +5,52 @@ All notable changes to TradeTracker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-02
+
+### Added
+- **TradeMemory**: persistent villager tracking and price comparison system
+  - Every villager is registered automatically when its trade screen is opened
+    (profession, position, dimension, first/last seen) and updated while nearby —
+    stored permanently in `config/tradetracker_memory.json`
+  - Offer prices are captured on GUI open (even without trading); completed trades
+    are recorded per villager with item, emerald price and buy/sell direction
+  - **Villager Memory screen** (keybind `V`): list of all known villagers with
+    profession, custom tag, position, trade count and last-seen time; sortable by
+    last seen or profession (`Tab`); typing searches offers by item name, sorted
+    cheapest first
+  - **Villager detail screen**: full info header, known offers with cross-villager
+    price comparison ("Better price: N◆ · who · distance" badge), per-villager trade
+    history, and actions: Mark for Tracking, Set Custom Tag, Remove
+  - Enchanted books are compared per enchantment (e.g. "Enchanted Book (Mending)")
+  - Dynamic villager prices (demand, Hero of the Village, gossip discounts/markups) are
+    tracked: stored prices reflect the actual current cost, shown as "▼6◆ (7◆)" with the
+    base price in parentheses — green for discounts, red for raised prices; the session
+    profit calculation also uses the actually paid price now
+  - **Glow effect**: villagers marked for tracking get a vanilla glow outline in a
+    configurable color (client-side)
+  - **Direction arrows**: HUD indicators pointing towards marked villagers with
+    name/tag and distance, shown at a fixed configurable screen anchor (default
+    top center, 9 positions) — only the arrow glyph follows the view direction
+  - New config category **Trade Memory** (glow on/off, glow color, direction arrows
+    on/off), localized in English and German
+
+### Changed
+- **Unified TradeTracker window**: Villager Memory and Trade History now share one
+  window with a navigation sidebar on the left — switch between the tabs without
+  separate keybinds. `V` opens the window on the last used tab.
+
+### Fixed
+- Trade counter nameplate no longer rendered twice when the villager is riding
+  another entity (e.g. a boat) — the label was also submitted for the vehicle's
+  renderer
+- Buy offers (villager pays emeralds) now track price changes: demand and gossip
+  adjustments apply to the demanded item count, not the emerald payout — the offer
+  list shows "×6 → 1◆" and e.g. "▲×10 (×6) → 1◆" in red when the villager currently
+  demands more items (previously buy offers always showed a static price and never
+  any markup/discount)
+- Known offers show how often each offer was traded with this villager
+  ("· traded 26×"), making per-offer tracking visible
+
 ## [1.1.1] - 2026-06-21
 - **Support for Minecraft 26.2** — Updated all dependencies (Fabric Loader 0.19.3, Fabric API 0.152.1, Loom 1.17.11, YACL 3.9.4, ModMenu 20.0.0-beta.3) and Gradle 9.5.1 for the latest Minecraft version
 - **Maven group changed** from `com.example.tradetracker` to `de.dennisthegamer.tradetracker`
