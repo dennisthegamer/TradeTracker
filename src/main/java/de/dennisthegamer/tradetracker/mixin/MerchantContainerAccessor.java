@@ -1,4 +1,4 @@
-package com.example.tradetracker.mixin;
+package de.dennisthegamer.tradetracker.mixin;
 
 import net.minecraft.world.inventory.MerchantContainer;
 import net.minecraft.world.item.trading.Merchant;

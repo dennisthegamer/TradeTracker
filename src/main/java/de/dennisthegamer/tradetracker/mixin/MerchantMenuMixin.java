@@ -1,6 +1,6 @@
-package com.example.tradetracker.mixin;
+package de.dennisthegamer.tradetracker.mixin;
 
-import com.example.tradetracker.event.TradeEventHandler;
+import de.dennisthegamer.tradetracker.event.TradeEventHandler;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MerchantResultSlot;

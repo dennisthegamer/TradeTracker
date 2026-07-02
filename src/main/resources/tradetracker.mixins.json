@@ -1,11 +1,13 @@
 {
 	"required": true,
-	"package": "com.example.tradetracker.mixin",
+	"package": "de.dennisthegamer.tradetracker.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"MerchantMenuMixin",
 		"MerchantContainerAccessor",
-		"VillagerNametagMixin"
+		"VillagerNametagMixin",
+		"MinecraftGlowMixin",
+		"EntityTeamColorMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

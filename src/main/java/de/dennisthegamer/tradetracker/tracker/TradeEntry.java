@@ -1,4 +1,4 @@
-package com.example.tradetracker.tracker;
+package de.dennisthegamer.tradetracker.tracker;
 
 import net.minecraft.world.item.ItemStack;
 

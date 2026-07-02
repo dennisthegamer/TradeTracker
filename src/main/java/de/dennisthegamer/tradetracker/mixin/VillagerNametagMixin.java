@@ -1,13 +1,14 @@
-package com.example.tradetracker.mixin;
+package de.dennisthegamer.tradetracker.mixin;
 
-import com.example.tradetracker.config.TradeTrackerConfig;
-import com.example.tradetracker.render.VillagerNameplateRenderer;
-import com.example.tradetracker.tracker.VillagerTradeStore;
+import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
+import de.dennisthegamer.tradetracker.render.VillagerNameplateRenderer;
+import de.dennisthegamer.tradetracker.tracker.VillagerTradeStore;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.VillagerRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.phys.AABB;
@@ -27,6 +28,9 @@ public abstract class VillagerNametagMixin {
     private void tradetracker$onSubmit(EntityRenderState state, PoseStack poseStack,
                                         SubmitNodeCollector collector, CameraRenderState camera,
                                         CallbackInfo ci) {
+        // Injects into the base EntityRenderer: without this filter the label is
+        // also submitted for non-villager entities near the villager (e.g. its boat)
+        if (!(state instanceof VillagerRenderState)) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
         if (!TradeTrackerConfig.getInstance().enabled) return;

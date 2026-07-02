@@ -1,10 +1,9 @@
-package com.example.tradetracker.screen;
+package de.dennisthegamer.tradetracker.screen;
 
-import com.example.tradetracker.tracker.TradeEntry;
-import com.example.tradetracker.tracker.TradeSession;
+import de.dennisthegamer.tradetracker.tracker.TradeEntry;
+import de.dennisthegamer.tradetracker.tracker.TradeSession;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class TradeHistoryScreen extends Screen {
+public class TradeHistoryScreen extends TradeTrackerTabScreen {
 
     private static final int BG_COLOR = 0xCC000000;
     private static final int HEADER_COLOR = 0xFFFFD700;
@@ -38,7 +37,7 @@ public class TradeHistoryScreen extends Screen {
     private int statusMessageTicks = 0;
 
     public TradeHistoryScreen() {
-        super(Component.translatable("tradetracker.history.title"));
+        super(Component.translatable("tradetracker.history.title"), Tab.HISTORY);
         this.session = TradeSession.getInstance();
 
         // Build profession list
@@ -59,8 +58,10 @@ public class TradeHistoryScreen extends Screen {
         Font font = this.font;
         int screenW = this.width;
         int screenH = this.height;
-        int leftPanelWidth = screenW / 3;
-        int rightPanelX = leftPanelWidth + 1;
+        int contentX = contentX();
+        int leftPanelX = contentX;
+        int leftPanelWidth = (screenW - contentX) / 3;
+        int rightPanelX = contentX + leftPanelWidth + 1;
         int rightPanelWidth = screenW - rightPanelX;
         int headerHeight = 30;
         int lineHeight = font.lineHeight + 4;
@@ -88,14 +89,17 @@ public class TradeHistoryScreen extends Screen {
                     (screenW - font.width(statusMessage)) / 2, headerHeight + 2, 0xFF55FF55, true);
         }
 
+        // === Sidebar (tab navigation) ===
+        renderSidebar(graphics, mouseX, mouseY);
+
         // === Vertical divider ===
-        graphics.fill(leftPanelWidth, headerHeight, leftPanelWidth + 1, screenH, DIVIDER_COLOR);
+        graphics.fill(leftPanelX + leftPanelWidth, headerHeight, leftPanelX + leftPanelWidth + 1, screenH, DIVIDER_COLOR);
 
         // === Left Panel: Professions ===
         int contentStartY = headerHeight + padding + (statusMessage != null && statusMessageTicks > 0 ? font.lineHeight + 2 : 0);
 
         String leftHeader = I18n.get("tradetracker.history.professions");
-        graphics.text(font, leftHeader, padding, contentStartY, HEADER_COLOR, true);
+        graphics.text(font, leftHeader, leftPanelX + padding, contentStartY, HEADER_COLOR, true);
         int profY = contentStartY + lineHeight + 2;
 
         Map<String, Integer> profBalances = session.getProfessionBalances();
@@ -106,13 +110,13 @@ public class TradeHistoryScreen extends Screen {
             if (entryY < contentStartY + lineHeight || entryY > screenH - lineHeight) continue;
 
             boolean selected = (i == selectedProfessionIndex + 1);
-            boolean hovered = mouseX >= 0 && mouseX < leftPanelWidth
+            boolean hovered = mouseX >= leftPanelX && mouseX < leftPanelX + leftPanelWidth
                     && mouseY >= entryY && mouseY < entryY + lineHeight;
 
             if (selected) {
-                graphics.fill(0, entryY, leftPanelWidth, entryY + lineHeight, SELECTED_COLOR);
+                graphics.fill(leftPanelX, entryY, leftPanelX + leftPanelWidth, entryY + lineHeight, SELECTED_COLOR);
             } else if (hovered) {
-                graphics.fill(0, entryY, leftPanelWidth, entryY + lineHeight, HOVER_COLOR);
+                graphics.fill(leftPanelX, entryY, leftPanelX + leftPanelWidth, entryY + lineHeight, HOVER_COLOR);
             }
 
             String profName;
@@ -132,11 +136,11 @@ public class TradeHistoryScreen extends Screen {
                 balanceStr = String.format("(%d) %+d◆", count, balance);
             }
 
-            graphics.text(font, profName, padding, entryY + 2, nameColor, true);
+            graphics.text(font, profName, leftPanelX + padding, entryY + 2, nameColor, true);
             int balColor = balanceStr.contains("+") ? PROFIT_COLOR : LOSS_COLOR;
             if (balanceStr.contains("+0")) balColor = TEXT_COLOR;
             graphics.text(font, balanceStr,
-                    leftPanelWidth - font.width(balanceStr) - padding, entryY + 2, balColor, true);
+                    leftPanelX + leftPanelWidth - font.width(balanceStr) - padding, entryY + 2, balColor, true);
         }
 
         // === Right Panel: Trade List ===
@@ -245,8 +249,11 @@ public class TradeHistoryScreen extends Screen {
         double mouseY = event.y();
         int button = event.button();
 
+        if (handleSidebarClick(event)) return true;
+
         if (button == 0) {
-            int leftPanelWidth = this.width / 3;
+            int leftPanelX = contentX();
+            int leftPanelWidth = (this.width - leftPanelX) / 3;
             int headerHeight = 30;
             int lineHeight = font.lineHeight + 4;
             int padding = 6;
@@ -254,7 +261,7 @@ public class TradeHistoryScreen extends Screen {
                     + (statusMessage != null && statusMessageTicks > 0 ? font.lineHeight + 2 : 0);
             int profY = contentStartY + lineHeight + 2;
 
-            if (mouseX < leftPanelWidth && mouseY > profY) {
+            if (mouseX >= leftPanelX && mouseX < leftPanelX + leftPanelWidth && mouseY > profY) {
                 int clickedIndex = (int) ((mouseY - profY) / lineHeight) + leftScrollOffset;
                 if (clickedIndex >= 0 && clickedIndex < professions.size()) {
                     selectedProfessionIndex = clickedIndex - 1; // -1 because index 0 = "All"
@@ -268,9 +275,9 @@ public class TradeHistoryScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        int leftPanelWidth = this.width / 3;
+        int leftPanelEnd = contentX() + (this.width - contentX()) / 3;
 
-        if (mouseX < leftPanelWidth) {
+        if (mouseX < leftPanelEnd) {
             // Scroll left panel
             leftScrollOffset = Math.max(0, leftScrollOffset - (int) scrollY);
             leftScrollOffset = Math.min(leftScrollOffset, Math.max(0, professions.size() - 5));
@@ -282,11 +289,6 @@ public class TradeHistoryScreen extends Screen {
         }
 
         return true;
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
     }
 
     private List<TradeEntry> getFilteredTrades() {

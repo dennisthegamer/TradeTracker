@@ -1,4 +1,4 @@
-package com.example.tradetracker.config;
+package de.dennisthegamer.tradetracker.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,6 +37,12 @@ public class TradeTrackerConfig {
     // Tracking Settings
     public boolean trackWanderingTrader = true;
     public boolean showVillagerNameplate = true;
+
+    // TradeMemory Settings
+    public boolean glowMarkedVillagers = true;
+    public boolean showDirectionArrow = true;
+    public String arrowPosition = "TOP_CENTER";
+    public int glowColor = 0x55FFFF;
 
     // Item Value Overrides (item ID -> emerald value)
     public Map<String, Float> itemValues = new HashMap<>();
@@ -91,5 +97,19 @@ public class TradeTrackerConfig {
 
     public enum HudPosition {
         TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+    }
+
+    public ArrowPosition getArrowPosition() {
+        try {
+            return ArrowPosition.valueOf(arrowPosition);
+        } catch (IllegalArgumentException e) {
+            return ArrowPosition.TOP_CENTER;
+        }
+    }
+
+    public enum ArrowPosition {
+        TOP_LEFT, TOP_CENTER, TOP_RIGHT,
+        MIDDLE_LEFT, CENTER, MIDDLE_RIGHT,
+        BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
     }
 }
