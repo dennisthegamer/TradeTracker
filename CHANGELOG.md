@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0] - 2026-07-02
 
-_Release for Minecraft 26.1 — same feature set as the 26.2 line._
-
 ### Added
 - **TradeMemory**: persistent villager tracking and price comparison system
   - Every villager is registered automatically when its trade screen is opened
