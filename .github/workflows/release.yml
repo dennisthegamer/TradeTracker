@@ -1,12 +1,12 @@
 # Automatically create GitHub releases with build artifacts
-# for every push to the main branch
+# for every push to a Minecraft version branch (mc26.1, mc26.2, ...)
 
 name: Release
 
 on:
   push:
     branches:
-      - mc26.1
+      - 'mc*'
 
 jobs:
   build:
@@ -78,7 +78,7 @@ jobs:
         id: changelog
         run: |
           VERSION="${{ needs.build.outputs.mod_version }}"
-          CHANGELOG=$(awk "/## \[$VERSION\]/{flag=1; next} /## \[.*\]/{flag=0} flag" docs/CHANGELOG.md | sed '/^$/d')
+          CHANGELOG=$(awk "/## \[$VERSION\]/{flag=1; next} /## \[.*\]/{flag=0} flag" CHANGELOG.md | sed '/^$/d')
 
           if [ -z "$CHANGELOG" ]; then
             echo "Warning: No CHANGELOG entry found for version $VERSION"
@@ -136,7 +136,7 @@ jobs:
 
           **Installation:** Download the main JAR file and place it in your mods folder along with Fabric API, ModMenu, and YACL.
 
-          For detailed installation instructions, see the [README](https://github.com/DennisTheGamer/TradeTracker/blob/mc26.1/docs/README.md).
+          For detailed installation instructions, see the [README](https://github.com/DennisTheGamer/TradeTracker/blob/${{ github.ref_name }}/README.md).
           RELEASE_BODY
 
       - name: Create Release
