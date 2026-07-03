@@ -125,8 +125,8 @@ jobs:
 
           ## Build Artifacts
 
-          - `tradetracker-${{ needs.build.outputs.mod_version }}.jar` - Main mod file (download this)
-          - `tradetracker-${{ needs.build.outputs.mod_version }}-sources.jar` - Source code
+          - `tradetracker-mc${{ needs.build.outputs.minecraft_version }}-${{ needs.build.outputs.mod_version }}.jar` - Main mod file (download this)
+          - `tradetracker-mc${{ needs.build.outputs.minecraft_version }}-${{ needs.build.outputs.mod_version }}-sources.jar` - Source code
 
           ## Recent Commits
 
