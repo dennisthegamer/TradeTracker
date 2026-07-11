@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+
+[[mods]]
+modId = "tradetracker"
+version = "${version}"
+displayName = "TradeTracker"
+description = '''Tracks all Villager trades, calculates Emerald profit/loss, and displays a full trade history with efficiency analysis.'''
+authors = "Dennis_thegamer"
+logoFile = "assets/tradetracker/icon.png"
+
+[[dependencies.tradetracker]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.2.0.0-beta,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.tradetracker]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.2,26.3)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[mixins]]
+config = "tradetracker.mixins.json"

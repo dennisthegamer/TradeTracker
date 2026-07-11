@@ -2,7 +2,6 @@ package de.dennisthegamer.tradetracker;
 
 import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
 import de.dennisthegamer.tradetracker.event.TradeEventHandler;
-import de.dennisthegamer.tradetracker.render.TrackingArrowHud;
 import de.dennisthegamer.tradetracker.render.TradeTrackerHud;
 import de.dennisthegamer.tradetracker.screen.TradeTrackerTabScreen;
 import de.dennisthegamer.tradetracker.tracker.TradeEntry;
@@ -11,11 +10,6 @@ import de.dennisthegamer.tradetracker.tracker.TradeSession;
 import de.dennisthegamer.tradetracker.tracker.VillagerSightingUpdater;
 import de.dennisthegamer.tradetracker.tracker.VillagerTradeStore;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.PauseScreen;
@@ -28,70 +22,57 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class TradeTrackerClient implements ClientModInitializer {
+/**
+ * Shared (loader-independent) client logic. The per-loader entrypoints in the
+ * {@code fabric}/{@code neoforge} subprojects call {@link #init()}, register the
+ * key mappings and HUD elements, and forward the end-of-client-tick event to
+ * {@link #onEndClientTick(Minecraft)}.
+ */
+public final class TradeTrackerClient {
 
     public static final String MOD_ID = "tradetracker";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    private static final KeyMapping.Category CATEGORY =
+    public static final KeyMapping.Category CATEGORY =
             new KeyMapping.Category(Identifier.fromNamespaceAndPath(MOD_ID, MOD_ID));
 
-    private static KeyMapping compactKey;
-    private static KeyMapping sessionToggleKey;
-    private static KeyMapping villagersKey;
+    public static final KeyMapping COMPACT_KEY = new KeyMapping(
+            "key.tradetracker.compact",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_T,
+            CATEGORY
+    );
 
-    private boolean wasInWorld = false;
-    private boolean wasMerchantScreenOpen = false;
-    private boolean wasPaused = false;
+    public static final KeyMapping SESSION_TOGGLE_KEY = new KeyMapping(
+            "key.tradetracker.session_toggle",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_J,
+            CATEGORY
+    );
 
-    @Override
-    public void onInitializeClient() {
+    public static final KeyMapping VILLAGERS_KEY = new KeyMapping(
+            "key.tradetracker.villagers",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_V,
+            CATEGORY
+    );
+
+    private static boolean wasInWorld = false;
+    private static boolean wasMerchantScreenOpen = false;
+    private static boolean wasPaused = false;
+
+    private TradeTrackerClient() {
+    }
+
+    /** Common client init — called once by each loader's entrypoint. */
+    public static void init() {
         LOGGER.info("TradeTracker loaded!");
 
         // Load config
         TradeTrackerConfig.getInstance();
-
-        // Register keybinds
-        compactKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "key.tradetracker.compact",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_T,
-                CATEGORY
-        ));
-
-        sessionToggleKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "key.tradetracker.session_toggle",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_J,
-                CATEGORY
-        ));
-
-        villagersKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "key.tradetracker.villagers",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_V,
-                CATEGORY
-        ));
-
-        // Register HUD renderer
-        HudElementRegistry.attachElementAfter(
-                VanillaHudElements.BOSS_BAR,
-                Identifier.fromNamespaceAndPath(MOD_ID, "hud"),
-                TradeTrackerHud::render
-        );
-
-        // TradeMemory: direction arrows for villagers marked for tracking
-        HudElementRegistry.attachElementAfter(
-                VanillaHudElements.BOSS_BAR,
-                Identifier.fromNamespaceAndPath(MOD_ID, "tracking_arrows"),
-                TrackingArrowHud::render
-        );
-
-        // Register tick handler
-        ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
     }
 
-    private void onTick(Minecraft client) {
+    public static void onEndClientTick(Minecraft client) {
         if (client.player == null) {
             handleWorldLeave(client);
             return;
@@ -107,7 +88,7 @@ public class TradeTrackerClient implements ClientModInitializer {
             VillagerTradeStore.getInstance().loadFromDisk();
             TradeMemoryStore.getInstance().loadFromDisk();
             TradeTrackerConfig config = TradeTrackerConfig.getInstance();
-            String keyName = sessionToggleKey.getTranslatedKeyMessage().getString();
+            String keyName = SESSION_TOGGLE_KEY.getTranslatedKeyMessage().getString();
 
             if (config.persistSessions && session.loadFromDisk()) {
                 client.player.sendSystemMessage(
@@ -161,16 +142,16 @@ public class TradeTrackerClient implements ClientModInitializer {
         wasMerchantScreenOpen = merchantOpen;
 
         // Process keybinds
-        while (compactKey.consumeClick()) {
+        while (COMPACT_KEY.consumeClick()) {
             TradeTrackerHud.toggleCompactMode();
         }
 
         // Unified TradeTracker window (villager memory + trade history, sidebar navigation)
-        while (villagersKey.consumeClick()) {
+        while (VILLAGERS_KEY.consumeClick()) {
             client.gui.setScreen(TradeTrackerTabScreen.openLastTab());
         }
 
-        while (sessionToggleKey.consumeClick()) {
+        while (SESSION_TOGGLE_KEY.consumeClick()) {
             TradeSession session = TradeSession.getInstance();
             session.togglePause();
             if (session.isPaused()) {
@@ -187,7 +168,7 @@ public class TradeTrackerClient implements ClientModInitializer {
         }
     }
 
-    private void handleWorldLeave(Minecraft client) {
+    private static void handleWorldLeave(Minecraft client) {
         if (!wasInWorld) return;
 
         TradeSession session = TradeSession.getInstance();
@@ -208,7 +189,7 @@ public class TradeTrackerClient implements ClientModInitializer {
         LOGGER.info("Session ended");
     }
 
-    private void sendSessionSummary(Minecraft client) {
+    private static void sendSessionSummary(Minecraft client) {
         if (client.player == null) return;
 
         TradeTrackerConfig config = TradeTrackerConfig.getInstance();

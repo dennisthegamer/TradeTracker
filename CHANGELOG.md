@@ -5,6 +5,20 @@ All notable changes to TradeTracker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **NeoForge support**: the repository now builds two jars from one codebase —
+  `tradetracker-fabric-mc26.2-<version>.jar` and `tradetracker-neoforge-mc26.2-<version>.jar`
+  - Shared code lives in `common/`; thin loader entrypoints in `fabric/` and `neoforge/`
+  - Loader calls (config directory) go through a `Platform` interface resolved via `ServiceLoader`
+  - On NeoForge the config screen is reachable from the mod list (`IConfigScreenFactory`);
+    ModMenu integration remains Fabric-only
+
+### Changed
+- YACL dependency bumped from 3.9.4+26.2 to 3.9.5+26.2 (3.9.4 is no longer
+  available on the YACL maven; 3.9.5 is the oldest hosted 26.2 build)
+
 ## [1.2.0] - 2026-07-02
 
 ### Added

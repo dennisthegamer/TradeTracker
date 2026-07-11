@@ -13,10 +13,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"de.dennisthegamer.tradetracker.TradeTrackerClient"
+			"de.dennisthegamer.tradetracker.fabric.TradeTrackerFabric"
 		],
 		"modmenu": [
-			"de.dennisthegamer.tradetracker.config.ModMenuIntegration"
+			"de.dennisthegamer.tradetracker.fabric.ModMenuIntegration"
 		]
 	},
 	"mixins": [
