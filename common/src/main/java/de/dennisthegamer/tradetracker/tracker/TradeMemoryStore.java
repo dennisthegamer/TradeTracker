@@ -3,7 +3,7 @@ package de.dennisthegamer.tradetracker.tracker;
 import de.dennisthegamer.tradetracker.TradeTrackerClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
+import de.dennisthegamer.tradetracker.platform.Platforms;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,7 +79,7 @@ public class TradeMemoryStore {
     private static final TradeMemoryStore INSTANCE = new TradeMemoryStore();
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path STORE_FILE = FabricLoader.getInstance().getConfigDir()
+    private static final Path STORE_FILE = Platforms.get().getConfigDir()
             .resolve("tradetracker_memory.json");
 
     private MemoryData data = new MemoryData();

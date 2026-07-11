@@ -13,10 +13,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"de.dennisthegamer.tradetracker.TradeTrackerClient"
+			"de.dennisthegamer.tradetracker.fabric.TradeTrackerFabric"
 		],
 		"modmenu": [
-			"de.dennisthegamer.tradetracker.config.ModMenuIntegration"
+			"de.dennisthegamer.tradetracker.fabric.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -25,11 +25,11 @@
 	"depends": {
 		"fabricloader": ">=0.18.4",
 		"fabric-api": "*",
-		"minecraft": ">=26.1",
+		"minecraft": "~26.1-",
 		"java": ">=25"
 	},
 	"suggests": {
-		"modmenu": "*",
-		"yet_another_config_lib_v3": "*"
+		"modmenu": ">=18.0.0",
+		"yet_another_config_lib": ">=3.9.2"
 	}
 }

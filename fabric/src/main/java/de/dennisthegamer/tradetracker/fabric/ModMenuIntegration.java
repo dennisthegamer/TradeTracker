@@ -1,7 +1,8 @@
-package de.dennisthegamer.tradetracker.config;
+package de.dennisthegamer.tradetracker.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import de.dennisthegamer.tradetracker.config.TradeTrackerConfigScreen;
 
 public class ModMenuIntegration implements ModMenuApi {
 
