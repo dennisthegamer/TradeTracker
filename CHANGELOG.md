@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **The NeoForge jar now requires Minecraft 26.1.2** — MC 26.1/26.1.1 are no longer accepted on NeoForge; on Fabric they remain supported
+
 ### Added
 - **NeoForge support**: the repository now builds two jars from one codebase —
   `tradetracker-fabric-mc26.1.2-<version>.jar` and `tradetracker-neoforge-mc26.1.2-<version>.jar`
