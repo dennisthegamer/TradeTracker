@@ -2,10 +2,12 @@ modLoader = "javafml"
 loaderVersion = "[1,)"
 license = "MIT"
 
+issueTrackerURL = "https://github.com/DennisTheGamer/TradeTracker/issues"
 [[mods]]
 modId = "tradetracker"
 version = "${version}"
 displayName = "TradeTracker"
+displayURL = "https://modrinth.com/mod/tradetracker"
 description = '''Tracks all Villager trades, calculates Emerald profit/loss, and displays a full trade history with efficiency analysis.'''
 authors = "Dennis_thegamer"
 logoFile = "assets/tradetracker/icon.png"

@@ -7,7 +7,10 @@
 	"authors": [
 		"Dennis_thegamer"
 	],
-	"contact": {},
+	"contact": {
+		"homepage": "https://modrinth.com/mod/tradetracker",
+		"issues": "https://github.com/DennisTheGamer/TradeTracker/issues"
+	},
 	"license": "MIT",
 	"icon": "assets/tradetracker/icon.png",
 	"environment": "client",
