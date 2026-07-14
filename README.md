@@ -1,6 +1,6 @@
 # TradeTracker
 
-A Minecraft Fabric mod that automatically tracks and analyzes all Villager and Wandering Trader trades, calculating emerald profit/loss in real-time with a detailed trade history and HUD overlay.
+A Minecraft mod for Fabric and NeoForge that automatically tracks and analyzes all Villager and Wandering Trader trades, calculating emerald profit/loss in real-time with a detailed trade history and HUD overlay.
 
 ## Features
 
@@ -16,16 +16,16 @@ A Minecraft Fabric mod that automatically tracks and analyzes all Villager and W
 
 ## Compatibility
 
-- **Minecraft**: 26.1+
-- **Fabric Loader**: 0.18.4+
-- **Fabric API**: Required
+- **Minecraft**: 26.1-26.1.2
+- **Loaders**: Fabric & NeoForge
+- **Fabric Loader**: 0.18.4+ (Fabric)
+- **Fabric API**: Required (Fabric)
 - **Java**: 25+
-- **ModMenu**: Required (for config screen)
-- **YACL**: Required (for config screen)
+- **ModMenu** + **YACL**: Required for the in-game config screen on Fabric (on NeoForge the config screen is reachable from the mod list)
 
 ## Download
 
-Download the latest release from [Modrinth](https://modrinth.com/mod/trade-tracker) or [GitHub Releases](https://github.com/DennisTheGamer/trade-tracker/releases).
+Download the latest release from [Modrinth](https://modrinth.com/mod/tradetracker) or [GitHub Releases](https://github.com/DennisTheGamer/TradeTracker/releases).
 
 ## Installation
 
@@ -54,8 +54,8 @@ Config file is saved at `config/tradetracker.json`.
 ## Building from Source
 
 ```bash
-git clone https://github.com/DennisTheGamer/trade-tracker.git
-cd trade-tracker
+git clone https://github.com/DennisTheGamer/TradeTracker.git
+cd TradeTracker
 ./gradlew build
 ```
 
@@ -67,10 +67,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
-- **Author**: DennisTheGamer
-- **Built with**: Fabric, Fabric API, YACL, ModMenu
+- **Author**: Dennis_thegamer
+- **Built with**: Fabric, NeoForge, Fabric API, YACL, ModMenu
 
 ## Support
 
-- Report bugs on [GitHub Issues](https://github.com/DennisTheGamer/trade-tracker/issues)
-- Visit the [Modrinth page](https://modrinth.com/mod/trade-tracker) for more information
+- Report bugs on [GitHub Issues](https://github.com/DennisTheGamer/TradeTracker/issues)
+- Visit the [Modrinth page](https://modrinth.com/mod/tradetracker) for more information
