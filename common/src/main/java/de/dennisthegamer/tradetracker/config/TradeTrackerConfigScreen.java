@@ -1,7 +1,11 @@
 package de.dennisthegamer.tradetracker.config;
 
+import de.dennisthegamer.tradetracker.hud.TradeTrackerHudBox;
+import de.dennisthegamer.tradetracker.hud.TradeTrackerSlotStore;
+import de.dennisthegamer.hudlib.ui.HudEditorScreen;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -52,13 +56,16 @@ public class TradeTrackerConfigScreen {
     private static ConfigCategory createHudCategory(TradeTrackerConfig config, TradeTrackerConfig defaults) {
         return ConfigCategory.createBuilder()
                 .name(Component.translatable("config.tradetracker.category.hud"))
-                .option(Option.<TradeTrackerConfig.HudPosition>createBuilder()
-                        .name(Component.translatable("config.tradetracker.hud_position"))
-                        .description(OptionDescription.of(Component.translatable("config.tradetracker.hud_position.tooltip")))
-                        .binding(defaults.getHudPosition(), config::getHudPosition, v -> config.hudPosition = v.name())
-                        .controller(opt -> EnumControllerBuilder.create(opt)
-                                .enumClass(TradeTrackerConfig.HudPosition.class)
-                                .formatValue(TradeTrackerConfigScreen::positionName))
+                .option(ButtonOption.createBuilder()
+                        .name(Component.translatable("config.tradetracker.hud_edit"))
+                        .description(OptionDescription.of(
+                                Component.translatable("config.tradetracker.hud_edit.tooltip")))
+                        .action((yaclScreen, opt) -> {
+                            TradeTrackerConfig cfg = TradeTrackerConfig.getInstance();
+                            Minecraft.getInstance().setScreen(new HudEditorScreen(
+                                    yaclScreen, new TradeTrackerHudBox(), new TradeTrackerSlotStore(),
+                                    cfg::getHudPlacement, p -> { cfg.hudPlacement = p; cfg.save(); }));
+                        })
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Component.translatable("config.tradetracker.hud_visible_always"))

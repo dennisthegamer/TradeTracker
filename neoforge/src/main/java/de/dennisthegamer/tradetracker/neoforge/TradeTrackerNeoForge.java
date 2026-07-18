@@ -4,6 +4,7 @@ import de.dennisthegamer.tradetracker.TradeTrackerClient;
 import de.dennisthegamer.tradetracker.config.TradeTrackerConfigScreen;
 import de.dennisthegamer.tradetracker.render.TrackingArrowHud;
 import de.dennisthegamer.tradetracker.render.TradeTrackerHud;
+import de.dennisthegamer.hudlib.neoforge.HudLibNeoForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
@@ -43,8 +44,8 @@ public final class TradeTrackerNeoForge {
     }
 
     private void onRegisterGuiLayers(RegisterGuiLayersEvent event) {
-        event.registerAbove(
-                VanillaGuiLayers.BOSS_OVERLAY,
+        HudLibNeoForge.register(
+                event,
                 Identifier.fromNamespaceAndPath(TradeTrackerClient.MOD_ID, "hud"),
                 TradeTrackerHud::render
         );

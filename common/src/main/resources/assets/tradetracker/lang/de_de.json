@@ -13,8 +13,8 @@
 
   "config.tradetracker.enabled": "Aktiviert",
   "config.tradetracker.enabled.tooltip": "Mod global ein- oder ausschalten",
-  "config.tradetracker.hud_position": "HUD Position",
-  "config.tradetracker.hud_position.tooltip": "Position des HUD-Overlays auf dem Bildschirm",
+  "config.tradetracker.hud_edit": "HUD-Position bearbeiten...",
+  "config.tradetracker.hud_edit.tooltip": "Öffnet den Editor: HUD frei auf dem Bildschirm verschieben oder Positions-Presets wählen und speichern.",
   "config.tradetracker.hud_visible_always": "Immer sichtbar",
   "config.tradetracker.hud_visible_always.tooltip": "HUD immer anzeigen oder nur bei offenem Villager-Handel",
   "config.tradetracker.hud_opacity": "HUD Transparenz",
@@ -57,6 +57,7 @@
   "tradetracker.hud.trades_today": "Trades heute: %d",
   "tradetracker.hud.compact": "\ud83d\uddfa Bilanz: %+d \u25c6 | %d Trades",
   "tradetracker.hud.no_trades": "Noch keine Trades",
+  "tradetracker.hud.reset": "Session zur\u00fcckgesetzt!",
 
   "tradetracker.session.press_to_start": "\ud83d\uddfa TradeTracker: Dr\u00fccke [%s] um die Session zu starten",
   "tradetracker.session.started": "\ud83d\uddfa TradeTracker: Session gestartet!",

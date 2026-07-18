@@ -1,5 +1,7 @@
 package de.dennisthegamer.tradetracker.render;
 
+import de.dennisthegamer.hudlib.effect.HudEffects;
+import de.dennisthegamer.hudlib.ui.HudPanel;
 import de.dennisthegamer.tradetracker.config.TradeTrackerConfig;
 import de.dennisthegamer.tradetracker.event.TradeEventHandler;
 import de.dennisthegamer.tradetracker.tracker.TradeEntry;
@@ -9,36 +11,31 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
-import org.joml.Matrix3x2fStack;
 
 public class TradeTrackerHud {
 
     private static boolean compactMode = false;
 
-    // Flash effect state
-    private static int flashTicksRemaining = 0;
-    private static int flashColor = 0xFFD700; // gold for profit, red for loss
-    private static final int FLASH_DURATION = 15; // 0.75 seconds
-
     private static final int PADDING = 6;
-    private static final int MARGIN = 10;
+    private static final int FULL_WIDTH = 220;
+    private static final int FLASH_DURATION = 15; // 0.75 Sekunden
+
+    private static final HudEffects EFFECTS = new HudEffects(FLASH_DURATION);
 
     public static void toggleCompactMode() {
         compactMode = !compactMode;
     }
 
     public static void triggerProfitFlash() {
-        flashTicksRemaining = FLASH_DURATION;
-        flashColor = 0xFFD700; // gold
+        EFFECTS.triggerFlash(0xFFD700); // gold
     }
 
     public static void triggerLossFlash() {
-        flashTicksRemaining = FLASH_DURATION;
-        flashColor = 0xFF5555; // red
+        EFFECTS.triggerFlash(0xFF5555); // red
     }
 
     public static void tick() {
-        if (flashTicksRemaining > 0) flashTicksRemaining--;
+        EFFECTS.tick();
     }
 
     public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
@@ -54,29 +51,66 @@ public class TradeTrackerHud {
         TradeSession session = TradeSession.getInstance();
         if (session.getTradeCount() == 0 && TradeEventHandler.isMerchantScreenClosed()) return;
 
-        float scale = config.hudScale;
-        Matrix3x2fStack pose = graphics.pose();
-        pose.pushMatrix();
-        pose.scale(scale, scale);
-
-        // Adjust screen dimensions for the scaled coordinate space
-        int scaledWidth = (int) (client.getWindow().getGuiScaledWidth() / scale);
-        int scaledHeight = (int) (client.getWindow().getGuiScaledHeight() / scale);
-
-        if (compactMode) {
-            renderCompact(graphics, client, session, config, scaledWidth, scaledHeight);
-        } else {
-            renderFull(graphics, client, session, config, scaledWidth, scaledHeight);
-        }
-
-        pose.popMatrix();
+        Font font = client.font;
+        int[] box = measure(font, session);
+        HudPanel.draw(graphics, config.getHudPlacement(), box[0], box[1],
+                config.hudScale, config.hudOpacity,
+                (g, x, y) -> drawContent(g, x, y, box[0], box[1], client, session, font));
     }
 
-    private static void renderCompact(GuiGraphicsExtractor graphics, Minecraft client,
-                                       TradeSession session, TradeTrackerConfig config,
-                                       int screenWidth, int screenHeight) {
-        Font font = client.font;
+    /** Breite/Höhe der aktuellen Box (für den HudBoxProvider des Editors). */
+    public static int[] measureBox() {
+        return measure(Minecraft.getInstance().font, TradeSession.getInstance());
+    }
 
+    /** Editor-Vorschau an expliziten (skalierten) Koordinaten. */
+    public static void drawPreview(GuiGraphicsExtractor graphics, int x, int y, float scale) {
+        Minecraft client = Minecraft.getInstance();
+        TradeSession session = TradeSession.getInstance();
+        Font font = client.font;
+        int[] box = measure(font, session);
+        HudPanel.drawAt(graphics, x, y, box[0], box[1], scale,
+                TradeTrackerConfig.getInstance().hudOpacity,
+                (g, bx, by) -> drawContent(g, bx, by, box[0], box[1], client, session, font));
+    }
+
+    /** {breite, hoehe} des jeweils aktiven Modus — identische Formeln wie der alte Renderer. */
+    private static int[] measure(Font font, TradeSession session) {
+        if (compactMode) {
+            String text = session.getTradeCount() == 0
+                    ? I18n.get("tradetracker.hud.no_trades")
+                    : I18n.get("tradetracker.hud.compact", session.getNetBalance(), session.getTradeCount());
+            return new int[] { font.width(text) + PADDING * 2, font.lineHeight + PADDING * 2 };
+        }
+        int lineHeight = font.lineHeight + 2;
+        int lines = 2;
+        if (session.getTradeCount() > 0) {
+            lines += 4;
+        }
+        return new int[] { FULL_WIDTH, PADDING * 2 + lines * lineHeight };
+    }
+
+    private static void drawContent(GuiGraphicsExtractor graphics, int x, int y,
+                                    int hudWidth, int hudHeight, Minecraft client,
+                                    TradeSession session, Font font) {
+        renderFlash(graphics, x, y, hudWidth, hudHeight);
+        if (compactMode) {
+            renderCompact(graphics, x, y, session, font);
+        } else {
+            renderFull(graphics, x, y, hudWidth, client, session, font);
+        }
+    }
+
+    private static void renderFlash(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
+        if (EFFECTS.isFlashing()) {
+            int flashAlpha = (int) (EFFECTS.flashAlpha() * 80);
+            int color = (flashAlpha << 24) | EFFECTS.flashColor();
+            graphics.fill(x - 1, y - 1, x + w + 1, y + h + 1, color);
+        }
+    }
+
+    private static void renderCompact(GuiGraphicsExtractor graphics, int x, int y,
+                                       TradeSession session, Font font) {
         String text;
         if (session.getTradeCount() == 0) {
             text = I18n.get("tradetracker.hud.no_trades");
@@ -84,50 +118,14 @@ public class TradeTrackerHud {
             text = I18n.get("tradetracker.hud.compact", session.getNetBalance(), session.getTradeCount());
         }
 
-        int textWidth = font.width(text);
-        int hudWidth = textWidth + PADDING * 2;
-        int hudHeight = font.lineHeight + PADDING * 2;
-
-        int x = getX(screenWidth, hudWidth, config);
-        int y = getY(screenHeight, hudHeight, config);
-
-        // Background
-        int bgColor = ((int) (config.hudOpacity * 255) << 24);
-        graphics.fill(x, y, x + hudWidth, y + hudHeight, bgColor);
-
-        // Flash
-        renderFlash(graphics, x, y, hudWidth, hudHeight);
-
-        // Text
         int color = session.getNetBalance() >= 0 ? 0xFF55FF55 : 0xFFFF5555;
         if (session.getTradeCount() == 0) color = 0xFFFFFFFF;
         graphics.text(font, text, x + PADDING, y + PADDING, color, true);
     }
 
-    private static void renderFull(GuiGraphicsExtractor graphics, Minecraft client,
-                                    TradeSession session, TradeTrackerConfig config,
-                                    int screenWidth, int screenHeight) {
-        Font font = client.font;
+    private static void renderFull(GuiGraphicsExtractor graphics, int x, int y, int hudWidth,
+                                   Minecraft client, TradeSession session, Font font) {
         int lineHeight = font.lineHeight + 2;
-        int hudWidth = 220;
-
-        // Calculate content lines
-        int lines = 2; // title + session trades
-        if (session.getTradeCount() > 0) {
-            lines += 4; // balance + best + worst + trades today
-        }
-        int hudHeight = PADDING * 2 + lines * lineHeight;
-
-        int x = getX(screenWidth, hudWidth, config);
-        int y = getY(screenHeight, hudHeight, config);
-
-        // Background
-        int bgColor = ((int) (config.hudOpacity * 255) << 24);
-        graphics.fill(x, y, x + hudWidth, y + hudHeight, bgColor);
-
-        // Flash
-        renderFlash(graphics, x, y, hudWidth, hudHeight);
-
         int currentY = y + PADDING;
 
         // Title - bold white
@@ -183,35 +181,12 @@ public class TradeTrackerHud {
 
             // Trades today
             if (client.level != null) {
-                int currentDay = (int) (client.level.getOverworldClockTime() / 24000L) + 1;
+                int currentDay = (int) (client.level.getGameTime() / 24000L) + 1;
                 int todayTrades = session.getTradesForDay(currentDay);
                 String todayText = I18n.get("tradetracker.hud.trades_today", todayTrades);
                 graphics.text(font, todayText, x + PADDING, currentY, 0xFFFFFFFF, true);
             }
         }
-    }
-
-    private static void renderFlash(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
-        if (flashTicksRemaining > 0) {
-            float alpha = (float) flashTicksRemaining / FLASH_DURATION;
-            int flashAlpha = (int) (alpha * 80);
-            int color = (flashAlpha << 24) | flashColor;
-            graphics.fill(x - 1, y - 1, x + w + 1, y + h + 1, color);
-        }
-    }
-
-    private static int getX(int screenWidth, int hudWidth, TradeTrackerConfig config) {
-        return switch (config.getHudPosition()) {
-            case TOP_LEFT, BOTTOM_LEFT -> MARGIN;
-            case TOP_RIGHT, BOTTOM_RIGHT -> screenWidth - hudWidth - MARGIN;
-        };
-    }
-
-    private static int getY(int screenHeight, int hudHeight, TradeTrackerConfig config) {
-        return switch (config.getHudPosition()) {
-            case TOP_LEFT, TOP_RIGHT -> MARGIN;
-            case BOTTOM_LEFT, BOTTOM_RIGHT -> screenHeight - hudHeight - MARGIN;
-        };
     }
 
     private static String truncateToFit(Font font, String text, int maxWidth) {

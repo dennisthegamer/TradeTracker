@@ -2,13 +2,18 @@ package de.dennisthegamer.tradetracker.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.dennisthegamer.hudlib.position.HudPlacement;
+import de.dennisthegamer.hudlib.position.HudPositionMigration;
+import de.dennisthegamer.hudlib.position.HudPreset;
 import de.dennisthegamer.tradetracker.platform.Platforms;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TradeTrackerConfig {
@@ -29,6 +34,11 @@ public class TradeTrackerConfig {
     public boolean hudVisibleAlways = false;
     public float hudOpacity = 0.6f;
     public float hudScale = 1.0f;
+
+    /** Freie HUD-Position (Anker + Offset). Nach {@link #load()} immer non-null. */
+    public HudPlacement hudPlacement = null;
+    /** Vom Nutzer gespeicherte Positions-Slots. */
+    public List<HudPreset> hudSlots = new ArrayList<>();
 
     // Session Settings
     public boolean showSessionSummary = true;
@@ -62,6 +72,7 @@ public class TradeTrackerConfig {
             try (FileReader reader = new FileReader(CONFIG_FILE)) {
                 TradeTrackerConfig config = GSON.fromJson(reader, TradeTrackerConfig.class);
                 if (config != null) {
+                    config.migrateHudPosition();
                     return config;
                 }
             } catch (IOException e) {
@@ -69,6 +80,7 @@ public class TradeTrackerConfig {
             }
         }
         TradeTrackerConfig config = new TradeTrackerConfig();
+        config.migrateHudPosition();
         config.save();
         return config;
     }
@@ -87,16 +99,27 @@ public class TradeTrackerConfig {
         }
     }
 
-    public HudPosition getHudPosition() {
-        try {
-            return HudPosition.valueOf(hudPosition);
-        } catch (IllegalArgumentException e) {
-            return HudPosition.TOP_LEFT;
+    /**
+     * Einmalige Migration: befüllt {@link #hudPlacement} aus dem Legacy-{@link #hudPosition}
+     * (4-Ecken-Enum als String; Feld-Default TOP_LEFT bleibt so optisch erhalten) und stoppt
+     * das Persistieren des Legacy-Feldes (Gson lässt null-Felder weg).
+     */
+    public void migrateHudPosition() {
+        if (hudPlacement == null) {
+            hudPlacement = HudPositionMigration.fromLegacy(hudPosition);
+        }
+        hudPosition = null;
+        if (hudSlots == null) {
+            hudSlots = new ArrayList<>();
         }
     }
 
-    public enum HudPosition {
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+    /** Non-null-Zugriff für Renderer/Editor (defensiv, falls die JSON von Hand geleert wurde). */
+    public HudPlacement getHudPlacement() {
+        if (hudPlacement == null) {
+            migrateHudPosition();
+        }
+        return hudPlacement;
     }
 
     public ArrowPosition getArrowPosition() {

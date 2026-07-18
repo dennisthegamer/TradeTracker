@@ -3,6 +3,7 @@ package de.dennisthegamer.tradetracker.fabric;
 import de.dennisthegamer.tradetracker.TradeTrackerClient;
 import de.dennisthegamer.tradetracker.render.TrackingArrowHud;
 import de.dennisthegamer.tradetracker.render.TradeTrackerHud;
+import de.dennisthegamer.hudlib.fabric.HudLibFabric;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
@@ -23,8 +24,7 @@ public final class TradeTrackerFabric implements ClientModInitializer {
         KeyMappingHelper.registerKeyMapping(TradeTrackerClient.VILLAGERS_KEY);
 
         // Register HUD renderer
-        HudElementRegistry.attachElementAfter(
-                VanillaHudElements.BOSS_BAR,
+        HudLibFabric.register(
                 Identifier.fromNamespaceAndPath(TradeTrackerClient.MOD_ID, "hud"),
                 TradeTrackerHud::render
         );

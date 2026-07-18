@@ -13,8 +13,8 @@
 
   "config.tradetracker.enabled": "Enabled",
   "config.tradetracker.enabled.tooltip": "Enable or disable the mod globally",
-  "config.tradetracker.hud_position": "HUD Position",
-  "config.tradetracker.hud_position.tooltip": "Position of the HUD overlay on screen",
+  "config.tradetracker.hud_edit": "Edit HUD Position...",
+  "config.tradetracker.hud_edit.tooltip": "Opens the editor: drag the HUD anywhere on screen, or pick and save position presets.",
   "config.tradetracker.hud_visible_always": "Always Visible",
   "config.tradetracker.hud_visible_always.tooltip": "Show HUD always or only when a Villager trade GUI is open",
   "config.tradetracker.hud_opacity": "HUD Opacity",
@@ -57,6 +57,7 @@
   "tradetracker.hud.trades_today": "Trades today: %d",
   "tradetracker.hud.compact": "\ud83d\uddfa Balance: %+d \u25c6 | %d Trades",
   "tradetracker.hud.no_trades": "No trades yet",
+  "tradetracker.hud.reset": "Session reset!",
 
   "tradetracker.session.press_to_start": "\ud83d\uddfa TradeTracker: Press [%s] to start session",
   "tradetracker.session.started": "\ud83d\uddfa TradeTracker: Session started!",
