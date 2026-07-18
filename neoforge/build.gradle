@@ -11,6 +11,10 @@ base {
 
 repositories {
 	mavenLocal()
+	maven {
+		name = 'DennisTheGamer'
+		url = 'https://dennisthegamer.github.io/maven'
+	}
 	mavenCentral()
 
 	// isXander's Maven for YACL
