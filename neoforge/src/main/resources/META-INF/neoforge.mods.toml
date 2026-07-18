@@ -26,5 +26,19 @@ versionRange = "[26.2,26.3)"
 ordering = "NONE"
 side = "CLIENT"
 
+[[dependencies.tradetracker]]
+modId = "hudlib"
+type = "required"
+versionRange = "[1.1,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+[[dependencies.tradetracker]]
+modId = "hudlibcore"
+type = "required"
+versionRange = "[1.1,)"
+ordering = "AFTER"
+side = "CLIENT"
+
 [[mixins]]
 config = "tradetracker.mixins.json"

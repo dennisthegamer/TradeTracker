@@ -13,8 +13,8 @@
 
   "config.tradetracker.enabled": "Aktiviert",
   "config.tradetracker.enabled.tooltip": "Mod global ein- oder ausschalten",
-  "config.tradetracker.hud_position": "HUD Position",
-  "config.tradetracker.hud_position.tooltip": "Position des HUD-Overlays auf dem Bildschirm",
+  "config.tradetracker.hud_edit": "HUD-Position bearbeiten...",
+  "config.tradetracker.hud_edit.tooltip": "Öffnet den Editor: HUD frei auf dem Bildschirm verschieben oder Positions-Presets wählen und speichern.",
   "config.tradetracker.hud_visible_always": "Immer sichtbar",
   "config.tradetracker.hud_visible_always.tooltip": "HUD immer anzeigen oder nur bei offenem Villager-Handel",
   "config.tradetracker.hud_opacity": "HUD Transparenz",
