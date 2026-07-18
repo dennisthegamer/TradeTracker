@@ -5,6 +5,21 @@ All notable changes to TradeTracker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-07-18
+
+### Added
+- **Freely positionable main HUD**: the config screen has a new "Edit HUD Position..." button
+  that opens an editor - drag the HUD anywhere on screen and confirm
+- **Position presets**: save, apply, rename and delete HUD positions
+- HudLib is bundled inside the jar (jar-in-jar); there is nothing extra to install
+
+### Changed
+- The main HUD is no longer limited to the four screen corners. An existing `hudPosition`
+  setting is migrated automatically to the same spot
+- HUD drawing and both trade flashes (gold on profit, red on loss) now come from the shared
+  HudLib; the visible behaviour is unchanged
+- The tracking arrow is deliberately untouched and keeps its own separate position setting
+
 ## [1.3.0] - 2026-07-14
 
 ### Added
