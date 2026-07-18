@@ -57,7 +57,6 @@
   "tradetracker.hud.trades_today": "Trades today: %d",
   "tradetracker.hud.compact": "\ud83d\uddfa Balance: %+d \u25c6 | %d Trades",
   "tradetracker.hud.no_trades": "No trades yet",
-  "tradetracker.hud.reset": "Session reset!",
 
   "tradetracker.session.press_to_start": "\ud83d\uddfa TradeTracker: Press [%s] to start session",
   "tradetracker.session.started": "\ud83d\uddfa TradeTracker: Session started!",

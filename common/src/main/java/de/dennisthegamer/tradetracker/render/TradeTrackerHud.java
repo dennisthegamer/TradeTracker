@@ -181,7 +181,7 @@ public class TradeTrackerHud {
 
             // Trades today
             if (client.level != null) {
-                int currentDay = (int) (client.level.getGameTime() / 24000L) + 1;
+                int currentDay = (int) (client.level.getOverworldClockTime() / 24000L) + 1;
                 int todayTrades = session.getTradesForDay(currentDay);
                 String todayText = I18n.get("tradetracker.hud.trades_today", todayTrades);
                 graphics.text(font, todayText, x + PADDING, currentY, 0xFFFFFFFF, true);
