@@ -146,6 +146,12 @@ public class TradeMemoryStore {
      * actually flips, not on every registration/sighting tick.
      */
     private void stampWorldId(VillagerRecord rec) {
+        // If we have no current world, don't erase a record's valid world stamp: an empty
+        // current key means belongsToCurrentWorld() is false for every record regardless, so
+        // overwriting with "" provides no display benefit and only destroys information.
+        if (worldId.isEmpty()) {
+            return;
+        }
         boolean wasMarkedHere = rec.markedForTracking && belongsToCurrentWorld(rec);
         rec.worldId = worldId;
         boolean isMarkedHere = rec.markedForTracking && belongsToCurrentWorld(rec);
