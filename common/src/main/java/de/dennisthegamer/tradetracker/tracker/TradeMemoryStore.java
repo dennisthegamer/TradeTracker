@@ -35,6 +35,12 @@ public class TradeMemoryStore {
         public String dimension;
         public String customTag;              // nullable free-text marker ("Elite", "Meide", ...)
         public boolean markedForTracking;     // glow + direction arrow active
+        /**
+         * Identity of the world this villager was seen in ("local:&lt;world dir&gt;" or
+         * "server:&lt;address&gt;"). Empty for records written before this field existed;
+         * those are never treated as belonging to any world.
+         */
+        public String worldId = "";
     }
 
     /** A completed trade with a specific villager. */
@@ -86,6 +92,8 @@ public class TradeMemoryStore {
     /** Fast lookup for the per-frame glow check. */
     private final Set<UUID> markedUuids = new HashSet<>();
     private boolean dirty = false;
+    /** Identity of the currently joined world; empty while no world is joined. */
+    private String worldId = "";
 
     private TradeMemoryStore() {}
 
@@ -113,6 +121,7 @@ public class TradeMemoryStore {
         rec.y = y;
         rec.z = z;
         rec.dimension = dimension;
+        rec.worldId = worldId;
         dirty = true;
     }
 
@@ -126,6 +135,7 @@ public class TradeMemoryStore {
         rec.y = y;
         rec.z = z;
         rec.dimension = dimension;
+        rec.worldId = worldId;
         dirty = true;
     }
 
@@ -189,6 +199,22 @@ public class TradeMemoryStore {
         List<VillagerRecord> list = new ArrayList<>(data.villagers.values());
         list.sort(Comparator.comparingLong((VillagerRecord r) -> r.lastSeen).reversed());
         return list;
+    }
+
+    /**
+     * A record belongs to the current world only if it carries a world identity and that
+     * identity matches. The dimension id alone is not enough: "minecraft:overworld" is the
+     * same string on every server and in every singleplayer world, so comparing only the
+     * dimension made villagers marked on one server show up on all others.
+     */
+    public boolean belongsToCurrentWorld(VillagerRecord rec) {
+        return rec != null && !worldId.isEmpty() && worldId.equals(rec.worldId);
+    }
+
+    /** Marked villagers of the world currently joined - the basis for arrow and glow. */
+    public List<VillagerRecord> getMarkedVillagersInCurrentWorld() {
+        return data.villagers.values().stream()
+                .filter(r -> r.markedForTracking && belongsToCurrentWorld(r)).toList();
     }
 
     public List<VillagerRecord> getMarkedVillagers() {
@@ -263,6 +289,20 @@ public class TradeMemoryStore {
         return count;
     }
 
+    // === World binding ===
+
+    /** Called on world join, after loadFromDisk: rebinds the store to the joined world. */
+    public void setWorld(String worldId) {
+        this.worldId = worldId == null ? "" : worldId;
+        rebuildMarkedCache();
+    }
+
+    /** Called on world leave: nothing is marked while no world is joined. */
+    public void clearWorld() {
+        worldId = "";
+        markedUuids.clear();
+    }
+
     // === Mutations from the GUI ===
 
     public void setMarkedForTracking(String uuid, boolean marked) {
@@ -296,7 +336,7 @@ public class TradeMemoryStore {
     private void rebuildMarkedCache() {
         markedUuids.clear();
         for (VillagerRecord rec : data.villagers.values()) {
-            if (!rec.markedForTracking) continue;
+            if (!rec.markedForTracking || !belongsToCurrentWorld(rec)) continue;
             try {
                 markedUuids.add(UUID.fromString(rec.uuid));
             } catch (IllegalArgumentException ignored) {
@@ -326,6 +366,11 @@ public class TradeMemoryStore {
             if (loaded.villagers == null) loaded.villagers = new HashMap<>();
             if (loaded.trades == null) loaded.trades = new ArrayList<>();
             if (loaded.priceHistory == null) loaded.priceHistory = new ArrayList<>();
+            // Gson allocates without running field initialisers, so records written before
+            // worldId existed come back as null rather than "".
+            for (VillagerRecord rec : loaded.villagers.values()) {
+                if (rec != null && rec.worldId == null) rec.worldId = "";
+            }
             data = loaded;
             rebuildMarkedCache();
             dirty = false;
