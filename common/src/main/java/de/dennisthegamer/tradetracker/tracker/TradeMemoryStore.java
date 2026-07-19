@@ -227,17 +227,12 @@ public class TradeMemoryStore {
     }
 
     /**
-     * Marked villagers of the world currently joined. The glow ({@link #isMarked(UUID)}) already
-     * applies this same filtering via {@code markedUuids}; the arrow still reads the unfiltered
-     * {@link #getMarkedVillagers()} until a later task wires it to this method instead.
+     * Marked villagers of the world currently joined. Both the glow ({@link #isMarked(UUID)})
+     * and the tracking arrow use this method, applying world filtering via {@code markedUuids}.
      */
     public List<VillagerRecord> getMarkedVillagersInCurrentWorld() {
         return data.villagers.values().stream()
                 .filter(r -> r.markedForTracking && belongsToCurrentWorld(r)).toList();
-    }
-
-    public List<VillagerRecord> getMarkedVillagers() {
-        return data.villagers.values().stream().filter(r -> r.markedForTracking).toList();
     }
 
     public boolean isMarked(UUID uuid) {
