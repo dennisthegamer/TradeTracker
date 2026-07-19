@@ -121,7 +121,7 @@ public class TradeMemoryStore {
         rec.y = y;
         rec.z = z;
         rec.dimension = dimension;
-        rec.worldId = worldId;
+        stampWorldId(rec);
         dirty = true;
     }
 
@@ -135,8 +135,23 @@ public class TradeMemoryStore {
         rec.y = y;
         rec.z = z;
         rec.dimension = dimension;
-        rec.worldId = worldId;
+        stampWorldId(rec);
         dirty = true;
+    }
+
+    /**
+     * Stamps the record with the currently joined world, and keeps {@link #markedUuids} in sync
+     * if that stamp changes whether the record belongs to the current world. Cheap in the common
+     * case: {@link #rebuildMarkedCache()} only runs when a marked record's world membership
+     * actually flips, not on every registration/sighting tick.
+     */
+    private void stampWorldId(VillagerRecord rec) {
+        boolean wasMarkedHere = rec.markedForTracking && belongsToCurrentWorld(rec);
+        rec.worldId = worldId;
+        boolean isMarkedHere = rec.markedForTracking && belongsToCurrentWorld(rec);
+        if (wasMarkedHere != isMarkedHere) {
+            rebuildMarkedCache();
+        }
     }
 
     // === Trades & prices ===
@@ -211,7 +226,11 @@ public class TradeMemoryStore {
         return rec != null && !worldId.isEmpty() && worldId.equals(rec.worldId);
     }
 
-    /** Marked villagers of the world currently joined - the basis for arrow and glow. */
+    /**
+     * Marked villagers of the world currently joined. The glow ({@link #isMarked(UUID)}) already
+     * applies this same filtering via {@code markedUuids}; the arrow still reads the unfiltered
+     * {@link #getMarkedVillagers()} until a later task wires it to this method instead.
+     */
     public List<VillagerRecord> getMarkedVillagersInCurrentWorld() {
         return data.villagers.values().stream()
                 .filter(r -> r.markedForTracking && belongsToCurrentWorld(r)).toList();
