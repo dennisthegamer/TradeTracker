@@ -30,7 +30,8 @@ public class TrackingArrowHud {
         TradeTrackerConfig config = TradeTrackerConfig.getInstance();
         if (!config.enabled || !config.showDirectionArrow) return;
 
-        List<TradeMemoryStore.VillagerRecord> marked = TradeMemoryStore.getInstance().getMarkedVillagers();
+        List<TradeMemoryStore.VillagerRecord> marked =
+                TradeMemoryStore.getInstance().getMarkedVillagersInCurrentWorld();
         if (marked.isEmpty()) return;
 
         String currentDimension = mc.level.dimension().identifier().toString();
