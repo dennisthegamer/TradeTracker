@@ -117,6 +117,7 @@ public class TradeTrackerHud {
         } else {
             text = I18n.get("tradetracker.hud.compact", session.getNetBalance(), session.getTradeCount());
         }
+        if (session.isPaused()) text = text + " " + (char) 0x23F8; // pause glyph (no time - TradeTracker is always-on)
 
         int color = session.getNetBalance() >= 0 ? 0xFF55FF55 : 0xFFFF5555;
         if (session.getTradeCount() == 0) color = 0xFFFFFFFF;
@@ -129,7 +130,8 @@ public class TradeTrackerHud {
         int currentY = y + PADDING;
 
         // Title - bold white
-        String title = I18n.get("tradetracker.hud.title");
+        String title = I18n.get("tradetracker.hud.title")
+                + (session.isPaused() ? " " + (char) 0x23F8 : ""); // pause glyph while tracking is paused
         int titleX = x + (hudWidth - font.width(title)) / 2;
         graphics.text(font, title, titleX, currentY, 0xFFFFFFFF, true);
         currentY += lineHeight;
