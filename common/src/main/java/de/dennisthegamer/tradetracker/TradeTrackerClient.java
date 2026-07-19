@@ -14,8 +14,11 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.storage.LevelResource;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +90,8 @@ public final class TradeTrackerClient {
             session.reset();
             VillagerTradeStore.getInstance().loadFromDisk();
             TradeMemoryStore.getInstance().loadFromDisk();
+            // Must run after loadFromDisk: it rebuilds the marked cache for this world only
+            TradeMemoryStore.getInstance().setWorld(worldKey(client));
             TradeTrackerConfig config = TradeTrackerConfig.getInstance();
             String keyName = SESSION_TOGGLE_KEY.getTranslatedKeyMessage().getString();
 
@@ -168,6 +173,23 @@ public final class TradeTrackerClient {
         }
     }
 
+    /**
+     * Identity of the joined world: the save directory in singleplayer, the server address
+     * in multiplayer. Empty if neither is known - records stamped with an empty id never
+     * match any world, so nothing is shown rather than something wrong.
+     */
+    private static String worldKey(Minecraft client) {
+        IntegratedServer server = client.getSingleplayerServer();
+        if (server != null) {
+            return "local:" + server.getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize();
+        }
+        ServerData data = client.getCurrentServer();
+        if (data != null && data.ip != null && !data.ip.isEmpty()) {
+            return "server:" + data.ip;
+        }
+        return "";
+    }
+
     private static void handleWorldLeave(Minecraft client) {
         if (!wasInWorld) return;
 
@@ -184,6 +206,7 @@ public final class TradeTrackerClient {
         }
         session.reset();
         TradeMemoryStore.getInstance().saveIfDirty();
+        TradeMemoryStore.getInstance().clearWorld();
         wasMerchantScreenOpen = false;
         wasInWorld = false;
         LOGGER.info("Session ended");
