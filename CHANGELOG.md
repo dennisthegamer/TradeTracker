@@ -5,6 +5,13 @@ All notable changes to TradeTracker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- Internal: the mixin configuration now declares `JAVA_25`, matching the class
+  files the build actually produces (it still claimed `JAVA_21`). No functional
+  change.
+
 ## [1.4.0] - 2026-07-18
 
 ### Added
