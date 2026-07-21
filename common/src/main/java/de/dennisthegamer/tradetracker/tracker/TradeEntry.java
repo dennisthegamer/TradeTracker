@@ -1,5 +1,6 @@
 package de.dennisthegamer.tradetracker.tracker;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -87,14 +88,13 @@ public class TradeEntry {
     }
 
     public String getLevelName() {
-        return switch (villagerLevel) {
-            case 1 -> "Novice";
-            case 2 -> "Apprentice";
-            case 3 -> "Journeyman";
-            case 4 -> "Expert";
-            case 5 -> "Master";
-            default -> "Unknown";
-        };
+        // Ueber die Sprachdateien statt hart englisch: die Keys
+        // tradetracker.level.1-5 gab es samt deutscher Uebersetzung laengst,
+        // sie wurden nur nie gelesen.
+        String key = (villagerLevel >= 1 && villagerLevel <= 5)
+                ? "tradetracker.level." + villagerLevel
+                : "tradetracker.level.unknown";
+        return Component.translatable(key).getString();
     }
 
     public String getInputDescription() {

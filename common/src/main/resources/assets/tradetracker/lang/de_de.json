@@ -87,6 +87,7 @@
   "tradetracker.level.2": "Lehrling",
   "tradetracker.level.3": "Geselle",
   "tradetracker.level.4": "Experte",
+  "tradetracker.level.unknown": "Unbekannt",
   "tradetracker.level.5": "Meister",
 
   "tradetracker.flash.profit": "Guter Trade!",
