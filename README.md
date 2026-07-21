@@ -41,7 +41,7 @@ Download the latest release from [Modrinth](https://modrinth.com/mod/tradetracke
 Open the config screen via ModMenu. Available settings:
 
 - **General** - Enable/disable mod, session persistence, Wandering Trader tracking
-- **HUD** - Position (4 corners), opacity (0-100%), scale (50-150%), visibility mode
+- **HUD** - Freely placeable position (drag editor with presets), opacity (0-100%), scale (50-150%), visibility mode
 - **Session** - Session summary display
 
 Keybinds are listed under **Controls > TradeTracker**:
